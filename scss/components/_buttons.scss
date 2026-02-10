@@ -1,0 +1,39 @@
+.btn-reserva {
+    background-color: $color-acento;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.3s ease;
+
+    &:hover {
+        background-color: lighten($color-acento, 10%);
+        transform: translateY(-2px);
+    }
+
+    &:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+    }
+}
+
+.btn-primary {
+    background-color: $color-principal;
+    color: white !important; // Forzamos blanco para que resalte sobre el marrón
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s ease;
+
+    &:hover {
+        background-color: lighten($color-principal, 10%);
+    }
+
+    &:active {
+        transform: translateY(0);
+    }
+}

@@ -1,0 +1,42 @@
+#calendar-container {
+    padding: 50px 5%;
+    text-align: center;
+
+    h2 {
+        margin-bottom: 30px;
+        color: $color-texto;
+    }
+
+    .class-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 20px;
+    }
+
+    .class-card {
+        background: #f1efe7;
+        padding: 25px;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        border: 1px solid #eee;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        transition: 0.3s;
+
+        &:hover {
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        h3 {
+            color: $color-principal;
+            margin-bottom: 15px;
+        }
+
+        p {
+            color: #666;
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+        }
+    }
+}

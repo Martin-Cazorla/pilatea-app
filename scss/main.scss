@@ -1,0 +1,17 @@
+// Importamos variables primero
+@import 'base/variables';
+@import 'base/base';
+@import 'base/_backgrounds.scss';
+
+// Importamos componentes y layouts
+@import 'components/buttons';
+@import 'components/modals';
+@import 'layouts/nav';
+@import 'layouts/footer';
+@import 'layouts/header';
+
+// Importamos pages
+@import 'pages/classes';
+@import 'pages/admin';
+@import 'pages/admin-config';
+@import 'pages/login';

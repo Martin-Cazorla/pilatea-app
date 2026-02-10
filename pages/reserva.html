@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reservar Turno - Pilatea</title>
+    <link rel="stylesheet" href="../css/main.css">
+</head>
+<body>
+    <header class="main-header">
+        <div class="logo-container">
+            <a href="../index.html"><img src="../assets/img/logo-pilatea-removebg-preview.png" alt="Logo"></a>
+        </div>
+        <div class="header-actions">
+            <span id="user-welcome">Hola, Alumno</span>
+            <a href="../index.html" class="btn-back">Cerrar Sesión</a>
+        </div>
+    </header>
+
+    <main class="reservation-container">
+        <h2>Seleccioná tu horario</h2>
+        <div class="date-selector">
+            <label>Fecha:</label>
+            <input type="date" id="reservation-date" min="2026-02-10">
+        </div>
+
+        <div id="time-slots-grid" class="time-slots-grid">
+            <p>Cargando horarios disponibles...</p>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-info">
+                <p><strong>Estudio Pilatea</strong> | Miguel Soler 311 | Contacto: +54 9 11 25922054</p>
+            </div>
+        
+            <div class="social-links">
+                <a href="https://instagram.com/tucuenta" target="_blank" class="social-icon">
+                    <i class="fa-brands fa-instagram"></i>
+                </a>
+                <a href="https://wa.me/5491125922054" target="_blank" class="social-icon">
+                    <i class="fa-brands fa-whatsapp"></i>
+                </a>
+            </div>
+        </div>
+
+        <div class="copyright">
+            &copy; 2026 Cazorla Estudio - Todos los derechos reservados.
+        </div>
+    </footer>
+
+    <script type="importmap">
+      {
+        "imports": {
+          "firebase/app": "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js",
+          "firebase/firestore": "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js"
+        }
+      }
+    </script>
+    <script type="module" src="../js/reservation.js"></script>
+</body>
+</html>

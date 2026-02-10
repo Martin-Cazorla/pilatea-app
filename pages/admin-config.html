@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuración - Pilatea</title>
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header class="main-header">
+        <div class="logo-container">
+            <a href="../index.html">
+                <img src="../assets/img/logo-pilatea-removebg-preview.png" alt="Logo Pilatea">
+            </a>
+        </div>
+        <div class="header-actions">
+            <a href="admin.html" class="btn-back">Volver al Panel</a>
+        </div>
+    </header>
+    
+    <main class="admin-config-container">
+        <h2>Configuración del Sistema</h2>
+
+        <section class="config-section">
+            <h3><i class="fa-solid fa-users"></i> Gestión de Alumnos</h3>
+            <div class="actions-grid">
+                <button class="btn-action" onclick="openModal('add-student')">Nuevo Alumno</button>
+                <button class="btn-action" onclick="openModal('add-credits')">Cargar Créditos</button>
+            </div>
+        
+            <div class="table-wrapper">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Email</th>
+                            <th>Créditos Disp.</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="student-list">
+                        </tbody>
+                </table>
+            </div>
+        </section>
+        <section class="config-section">
+            <h3><i class="fa-solid fa-gear"></i> Configuración de Clases</h3>
+            <div class="classes-grid">
+                <div class="class-config-card">
+                    <h4>Pilates Reformer</h4>
+                    <div class="input-group">
+                        <label>Vacantes por hora:</label>
+                        <input type="number" id="config-vacantes" value="5" class="select-filter">
+                    </div>
+                    <div class="input-group">
+                        <label>Horario Inicio:</label>
+                        <input type="time" id="config-inicio" value="08:00" class="input-calendar">
+                    </div>
+                    <div class="input-group">
+                        <label>Horario Fin (Último turno):</label>
+                        <input type="time" id="config-fin" value="20:00" class="input-calendar">
+                    </div>
+                    <button id="btn-save-config" class="btn-action btn-save">Guardar Cambios</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div id="modal-student" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-user-plus"></i> Nuevo Alumno</h3>
+                <button class="close-modal" onclick="closeModal('modal-student')">&times;</button>
+            </div>
+            <form id="form-add-student" class="modal-body">
+                <div class="input-group">
+                    <label>Nombre Completo</label>
+                    <input type="text" placeholder="Ej: Juan Perez" required>
+                </div>
+                <div class="input-group">
+                    <label>Email</label>
+                    <input type="email" placeholder="juan@mail.com" required>
+                </div>
+                <button type="submit" class="btn-action">Guardar Alumno</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="modal-credits" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-ticket"></i> Cargar Créditos</h3>
+                <button class="close-modal" onclick="closeModal('modal-credits')">&times;</button>
+            </div>
+            <form id="form-add-credits" class="modal-body">
+                <div class="input-group">
+                    <label>Seleccionar Alumno</label>
+                    <select id="select-student-credits" class="select-filter" required>
+                        <option value="">Cargando alumnos...</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Cantidad de Unidades (Créditos)</label>
+                    <input type="number" id="input-credits-amount" min="1" value="8">
+                </div>
+                <button type="submit" class="btn-action">Confirmar Carga</button>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-info">
+                <p><strong>Estudio Pilatea</strong> | Miguel Soler 311 | Contacto: +54 9 11 25922054</p>
+            </div>
+        
+            <div class="social-links">
+                <a href="https://instagram.com/tucuenta" target="_blank" class="social-icon">
+                    <i class="fa-brands fa-instagram"></i>
+                </a>
+                <a href="https://wa.me/5491125922054" target="_blank" class="social-icon">
+                    <i class="fa-brands fa-whatsapp"></i>
+                </a>
+            </div>
+        </div>
+
+        <div class="copyright">
+            &copy; 2026 Cazorla Estudio - Todos los derechos reservados.
+        </div>
+    </footer>
+
+    <script src="../js/modals.js"></script>
+    <script type="importmap">
+      {
+        "imports": {
+          "firebase/app": "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js",
+          "firebase/firestore": "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js",
+          "firebase/auth": "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js"
+        }
+      }
+    </script>
+    <script type="module" src="../js/admin-firebase.js"></script>
+
+</body>
+</html>

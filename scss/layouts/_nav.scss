@@ -1,0 +1,56 @@
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 5%; 
+    background-color: $color-nav-bg; // Tu color crema #f1efe7
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+
+    .logo-container {
+        .main-logo {
+            height: 50px; 
+            width: auto;  
+            display: block;
+            transition: transform 0.3s ease;
+
+            &:hover {
+                transform: scale(1.05); 
+            }
+        }
+    }
+
+    // Contenedor que agrupa los accesos de Alumno y Staff
+    .nav-links {
+        display: flex;
+        align-items: center;
+        gap: 15px; // Espacio entre los botones
+
+        .btn-login-nav {
+            text-decoration: none;
+            color: $color-texto;
+            font-weight: bold;
+            font-size: 0.9rem;
+            transition: color 0.3s;
+
+            &:hover {
+                color: $color-acento; // El azul de tu logo
+            }
+        }
+
+        .btn-staff {
+            text-decoration: none;
+            color: white;
+            background-color: $color-acento; // Tono oscuro profesional
+            padding: 8px 15px;
+            border-radius: 5px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            transition: background 0.3s;
+
+            &:hover {
+                background-color: lighten(#2c3e50, 10%);
+                color: white; // Aseguramos que el texto siga blanco
+            }
+        }
+    }
+}

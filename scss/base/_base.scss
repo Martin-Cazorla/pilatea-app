@@ -1,0 +1,18 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    min-height: 100vh; // 100% del alto de la ventana (Viewport Height)
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+}
+
+// Esto es clave: envuelve tu contenido principal (nav y section) 
+// para que "empuje" al footer
+main, #calendar-container {
+    flex: 1; 
+}
