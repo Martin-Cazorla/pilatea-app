@@ -6,12 +6,12 @@ import {
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAsV8J1doRrUiyOg-miAP2FGdcW6Cz0jmQ",
-  authDomain: "pilatea-app.firebaseapp.com",
-  projectId: "pilatea-app",
-  storageBucket: "pilatea-app.firebasestorage.app",
-  messagingSenderId: "132126534808",
-  appId: "1:132126534808:web:405267a30d66cb413174ed"
+  apiKey: "AIzaSyCedurhdaLQfrSFHWn7J9ptN6mIq3HfJOY",
+  authDomain: "pilatea-sistema.firebaseapp.com",
+  projectId: "pilatea-sistema",
+  storageBucket: "pilatea-sistema.firebasestorage.app",
+  messagingSenderId: "478294720150",
+  appId: "1:478294720150:web:9efe132aa23cad2db7ccb7"
 };
 
 // Inicialización de servicios
@@ -113,5 +113,26 @@ if (creditsForm) {
             creditsForm.reset();
             if (typeof closeModal === 'function') closeModal('modal-credits');
         } catch (error) { console.error("Error créditos:", error); }
+    });
+}
+// --- GUARDAR CONFIGURACIÓN DE CLASES ---
+const btnSaveConfig = document.getElementById('btn-save-config');
+if (btnSaveConfig) {
+    btnSaveConfig.addEventListener('click', async () => {
+        const vacantes = document.getElementById('config-vacantes').value;
+        const horaInicio = document.getElementById('config-inicio').value;
+        const horaFin = document.getElementById('config-fin').value;
+
+        try {
+            await setDoc(doc(db, "configuracion", "clases"), {
+                vacantes: parseInt(vacantes),
+                horaInicio: horaInicio,
+                horaFin: horaFin
+            });
+            alert("Configuración guardada correctamente");
+        } catch (error) {
+            console.error("Error al guardar config:", error);
+            alert("Error al guardar la configuración");
+        }
     });
 }

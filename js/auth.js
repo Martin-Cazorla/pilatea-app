@@ -2,12 +2,12 @@ import { initializeApp } from "firebase/app";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAsV8J1doRrUiyOg-miAP2FGdcW6Cz0jmQ",
-  authDomain: "pilatea-app.firebaseapp.com",
-  projectId: "pilatea-app",
-  storageBucket: "pilatea-app.firebasestorage.app",
-  messagingSenderId: "132126534808",
-  appId: "1:132126534808:web:405267a30d66cb413174ed"
+  apiKey: "AIzaSyCedurhdaLQfrSFHWn7J9ptN6mIq3HfJOY",
+  authDomain: "pilatea-sistema.firebaseapp.com",
+  projectId: "pilatea-sistema",
+  storageBucket: "pilatea-sistema.firebasestorage.app",
+  messagingSenderId: "478294720150",
+  appId: "1:478294720150:web:9efe132aa23cad2db7ccb7"
 };
 
 // Inicializamos todo junto
