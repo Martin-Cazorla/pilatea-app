@@ -1,7 +1,14 @@
-// Paleta de colores (Solo los datos)
-$color-principal: #5d4037; 
-$color-acento: #3e2723;    
-$color-texto: #212121;  
-$color-fondo: #f1faee;       
-$fuente-principal: 'Helvetica Neue', sans-serif;
-$color-nav-bg: #f1efe7; 
+// PALETA DE COLORES CENTRALIZADA
+$color-principal: #5d4037;    // Marrón chocolate
+$color-acento: #3e2723;       // Marrón oscuro / Botones staff
+$color-texto: #212121;        // Casi negro
+$color-crema: #f1efe7;        // Fondo Nav / Tarjetas
+$color-fondo-reserva: #a8daad; // Verde agua relajante
+$color-blanco: #ffffff;
+$color-error: #ff5252;
+$color-exito: #25D366;
+$color-nav-bg: #f1efe7;
+
+// TIPOGRAFÍA
+$fuente-principal: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+$fuente-secundaria: 'Montserrat', sans-serif;

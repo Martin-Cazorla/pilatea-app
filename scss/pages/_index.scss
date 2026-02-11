@@ -1,52 +1,43 @@
-// Archivo: _index.scss
-.main-content {
-    padding: 40px 5%;
-    text-align: center;
-
-    .hero-section {
-        background-color: #fcfaf5;
-        padding: 60px 20px;
-        border-radius: 20px;
-        margin-bottom: 40px;
-
-        h1 {
-            font-family: $fuente-principal;
-            color: $color-texto;
-            font-size: 2.5rem; 
-            margin-bottom: 20px;
-        }
-
-        p {
-            color: #666;
-            max-width: 600px;
-            margin: 0 auto 30px;
-        }
-    }
-}
-
-// Botones generales del sitio público
-.btn-reserva {
-    background-color: $color-principal;
-    color: white;
-    padding: 12px 25px;
-    border-radius: 30px;
-    text-decoration: none;
-    font-weight: bold;
-    display: inline-block;
-    transition: all 0.3s ease;
-
-    &:hover {
-        background-color: $color-acento;
-        transform: scale(1.05);
-    }
-}
-
-// Footer específico del sitio
-.footer-content {
+#calendar-container {
+    padding: 60px 5%;
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
     align-items: center;
-    padding: 20px 5%;
-    background-color: white;
-    border-top: 1px solid #eee;
+
+    .class-grid {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 30px;
+        width: 100%;
+        max-width: 1200px;
+
+        .class-card {
+            background-color: $color-crema;
+            border-radius: 15px;
+            width: 350px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+
+            .card-body {
+                padding: 40px 30px;
+                text-align: center;
+
+                .btn-primary {
+                    display: block;
+                    background-color: $color-principal; // Sin !important
+                    color: $color-blanco;
+                    padding: 15px 0;
+                    text-decoration: none;
+                    border-radius: 8px;
+                    font-weight: bold;
+                    transition: background 0.3s;
+
+                    &:hover {
+                        background-color: $color-acento;
+                    }
+                }
+            }
+        }
+    }
 }

@@ -49,13 +49,20 @@
 
         // Estilo para Acceso Staff
         .btn-staff {
+            background-color: transparent;
             text-decoration: none;
-            color: white;
-            background-color: #2c3e50;
-            padding: 8px 15px;
-            border-radius: 5px;
-            font-size: 0.85rem;
-            &:hover { background-color: lighten(#2c3e50, 10%); }
+            color: $color-principal;
+            border: 1.5px solid $color-principal;
+            padding: 8px 18px;
+            border-radius: 50px; // Estilo "píldora"
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+
+                &:hover {
+                    background-color: $color-principal;
+                    color: #fff;
+                    box-shadow: 0 4px 12px rgba($color-principal, 0.2); }
         }
     }
 }

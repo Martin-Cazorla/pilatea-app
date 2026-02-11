@@ -30,40 +30,33 @@ main, #calendar-container {
   background-size: cover;
 }
 
-.btn-reserva {
-  background-color: #3e2723;
-  color: white;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-weight: bold;
-  transition: background 0.3s ease;
-}
-.btn-reserva:hover {
-  background-color: rgb(94.5979381443, 59.5051546392, 53.4020618557);
-  transform: translateY(-2px);
-}
-.btn-reserva:disabled {
-  background-color: #ccc;
-  cursor: not-allowed;
-}
-
-.btn-primary {
+.btn-primary, .btn-reserva, .btn-login {
+  display: inline-block;
   background-color: #5d4037;
   color: white !important;
-  border: none;
-  padding: 12px 24px;
+  padding: 12px 25px;
   border-radius: 8px;
+  text-decoration: none;
   font-weight: bold;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  border: none;
   cursor: pointer;
-  transition: background 0.3s ease;
+  text-align: center;
+  transition: all 0.3s ease;
+  font-family: "Montserrat", sans-serif;
 }
-.btn-primary:hover {
-  background-color: rgb(125.0472972973, 86.0540540541, 73.9527027027);
+.btn-primary:hover, .btn-reserva:hover, .btn-login:hover {
+  background-color: #3e2723;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
-.btn-primary:active {
+.btn-primary:active, .btn-reserva:active, .btn-login:active {
   transform: translateY(0);
+}
+
+.btn-reserva, .btn-login {
+  border-radius: 30px;
 }
 
 .btn-slot {
@@ -71,12 +64,11 @@ main, #calendar-container {
   border: 2px solid #5d4037;
   padding: 20px;
   border-radius: 12px;
-  cursor: pointer;
-  transition: all 0.3s ease;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 5px;
+  transition: all 0.3s ease;
+  cursor: pointer;
 }
 .btn-slot span {
   font-size: 1.2rem;
@@ -88,26 +80,17 @@ main, #calendar-container {
 }
 .btn-slot:hover:not(:disabled) {
   background: #5d4037;
-  transform: translateY(-3px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 .btn-slot:hover:not(:disabled) span, .btn-slot:hover:not(:disabled) small {
-  color: white;
+  color: #ffffff;
 }
-.btn-slot:disabled, .btn-slot.btn-full {
+.btn-slot.btn-full {
   background-color: #e0e0e0;
-  color: #a0a0a0;
+  border-color: #ccc;
   cursor: not-allowed;
-  border: 2px solid #ccc;
-  transform: none;
-  box-shadow: none;
 }
-.btn-slot:disabled span, .btn-slot.btn-full span {
-  color: #999;
-}
-.btn-slot:disabled small, .btn-slot.btn-full small {
-  color: #d9534f;
-  font-weight: bold;
+.btn-slot.btn-full small {
+  color: #ff5252;
 }
 
 .modal-overlay {
@@ -167,6 +150,68 @@ main, #calendar-container {
     opacity: 1;
   }
 }
+.main-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 5%;
+  background-color: #f1efe7;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  width: 100%;
+}
+.main-header .logo-container img {
+  height: 50px;
+  width: auto;
+  transition: transform 0.3s ease;
+}
+.main-header .logo-container img:hover {
+  transform: scale(1.05);
+}
+.main-header .header-actions {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.main-header .header-actions .btn-login-nav {
+  text-decoration: none;
+  color: #212121;
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+.main-header .header-actions .btn-login-nav:hover {
+  color: #5d4037;
+}
+.main-header .header-actions .btn-back {
+  text-decoration: none;
+  color: #5d4037;
+  border: 1px solid #5d4037;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+.main-header .header-actions .btn-back:hover {
+  background-color: #5d4037;
+  color: white;
+}
+.main-header .header-actions .btn-staff {
+  background-color: transparent;
+  text-decoration: none;
+  color: #5d4037;
+  border: 1.5px solid #5d4037;
+  padding: 8px 18px;
+  border-radius: 50px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+.main-header .header-actions .btn-staff:hover {
+  background-color: #5d4037;
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(93, 64, 55, 0.2);
+}
+
 nav {
   display: flex;
   justify-content: space-between;
@@ -254,107 +299,148 @@ footer .copyright {
   padding-top: 5px;
 }
 
-.main-header {
+#calendar-container {
+  padding: 60px 5%;
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   align-items: center;
-  padding: 1rem 5%;
-  background-color: #f1efe7;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+#calendar-container .class-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 30px;
   width: 100%;
+  max-width: 1200px;
 }
-.main-header .logo-container img {
-  height: 50px;
-  width: auto;
-  transition: transform 0.3s ease;
+#calendar-container .class-grid .class-card {
+  background-color: #f1efe7;
+  border-radius: 15px;
+  width: 350px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
 }
-.main-header .logo-container img:hover {
-  transform: scale(1.05);
-}
-.main-header .header-actions {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
-.main-header .header-actions .btn-login-nav {
-  text-decoration: none;
-  color: #212121;
-  font-weight: bold;
-  font-size: 0.9rem;
-}
-.main-header .header-actions .btn-login-nav:hover {
-  color: #5d4037;
-}
-.main-header .header-actions .btn-back {
-  text-decoration: none;
-  color: #5d4037;
-  border: 1px solid #5d4037;
-  padding: 8px 16px;
-  border-radius: 6px;
-  font-size: 0.85rem;
-  font-weight: bold;
-  transition: all 0.3s ease;
-}
-.main-header .header-actions .btn-back:hover {
-  background-color: #5d4037;
-  color: white;
-}
-.main-header .header-actions .btn-staff {
-  text-decoration: none;
-  color: white;
-  background-color: #2c3e50;
-  padding: 8px 15px;
-  border-radius: 5px;
-  font-size: 0.85rem;
-}
-.main-header .header-actions .btn-staff:hover {
-  background-color: rgb(62.0967741935, 87.5, 112.9032258065);
-}
-
-.main-content {
-  padding: 40px 5%;
+#calendar-container .class-grid .class-card .card-body {
+  padding: 40px 30px;
   text-align: center;
 }
-.main-content .hero-section {
-  background-color: #fcfaf5;
-  padding: 60px 20px;
-  border-radius: 20px;
-  margin-bottom: 40px;
+#calendar-container .class-grid .class-card .card-body .btn-primary, #calendar-container .class-grid .class-card .card-body .btn-reserva, #calendar-container .class-grid .class-card .card-body .btn-login {
+  display: block;
+  background-color: #5d4037;
+  color: #ffffff;
+  padding: 15px 0;
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: bold;
+  transition: background 0.3s;
 }
-.main-content .hero-section h1 {
-  font-family: "Helvetica Neue", sans-serif;
-  color: #212121;
-  font-size: 2.5rem;
-  margin-bottom: 20px;
-}
-.main-content .hero-section p {
-  color: #666;
-  max-width: 600px;
-  margin: 0 auto 30px;
+#calendar-container .class-grid .class-card .card-body .btn-primary:hover, #calendar-container .class-grid .class-card .card-body .btn-reserva:hover, #calendar-container .class-grid .class-card .card-body .btn-login:hover {
+  background-color: #3e2723;
 }
 
-.btn-reserva {
-  background-color: #5d4037;
-  color: white;
-  padding: 12px 25px;
-  border-radius: 30px;
-  text-decoration: none;
-  font-weight: bold;
-  display: inline-block;
+.page-login {
+  margin: 0;
+  padding: 0;
+  font-family: "Montserrat", sans-serif;
+}
+
+.login-wrapper {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f1efe7;
+  padding: 20px;
+}
+
+.login-card {
+  background: white;
+  padding: 40px;
+  border-radius: 20px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05);
+  width: 100%;
+  max-width: 420px;
+  text-align: center;
+}
+.login-card .login-header {
+  margin-bottom: 35px;
+}
+.login-card .login-header img {
+  max-width: 180px;
+  height: auto;
+  margin-bottom: 15px;
+}
+.login-card .login-header p {
+  color: #888;
+  font-size: 0.95rem;
+}
+
+.login-form .form-group {
+  text-align: left;
+  margin-bottom: 25px;
+}
+.login-form .form-group label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #3e2723;
+  margin-bottom: 8px;
+}
+.login-form .form-group label i {
+  margin-right: 5px;
+  opacity: 0.7;
+}
+.login-form .form-group input {
+  width: 100%;
+  padding: 14px;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  font-family: inherit;
+  outline: none;
   transition: all 0.3s ease;
 }
-.btn-reserva:hover {
-  background-color: #3e2723;
-  transform: scale(1.05);
+.login-form .form-group input:focus {
+  border-color: #3e2723;
+  box-shadow: 0 0 8px rgba(62, 39, 35, 0.15);
 }
 
-.footer-content {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px 5%;
-  background-color: white;
+.btn-login {
+  width: 100%;
+  padding: 15px;
+  background-color: #3e2723;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.2s, background 0.3s;
+}
+.btn-login:hover {
+  background-color: rgb(29.4020618557, 18.4948453608, 16.5979381443);
+  transform: translateY(-2px);
+}
+
+.login-footer {
+  margin-top: 25px;
+}
+.login-footer hr {
+  border: 0;
   border-top: 1px solid #eee;
+  margin: 20px 0;
+}
+.login-footer .forgot-pass {
+  color: #999;
+  text-decoration: none;
+  font-size: 0.85rem;
+}
+.login-footer .forgot-pass:hover {
+  color: #3e2723;
+}
+.login-footer .no-account {
+  font-size: 0.85rem;
+  color: #666;
+  margin-bottom: 5px;
 }
 
 .reservation-container {
@@ -405,7 +491,7 @@ footer .copyright {
 .admin-container h2 {
   color: #212121;
   margin-bottom: 30px;
-  font-family: "Helvetica Neue", sans-serif;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 .admin-nav-tabs {
@@ -611,109 +697,4 @@ footer .copyright {
   font-size: 0.85rem;
   font-weight: bold;
   color: #666;
-}
-
-.page-login {
-  margin: 0;
-  padding: 0;
-  font-family: "Montserrat", sans-serif;
-}
-
-.login-wrapper {
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: #f1efe7;
-  padding: 20px;
-}
-
-.login-card {
-  background: white;
-  padding: 40px;
-  border-radius: 20px;
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05);
-  width: 100%;
-  max-width: 420px;
-  text-align: center;
-}
-.login-card .login-header {
-  margin-bottom: 35px;
-}
-.login-card .login-header img {
-  max-width: 180px;
-  height: auto;
-  margin-bottom: 15px;
-}
-.login-card .login-header p {
-  color: #888;
-  font-size: 0.95rem;
-}
-
-.login-form .form-group {
-  text-align: left;
-  margin-bottom: 25px;
-}
-.login-form .form-group label {
-  display: block;
-  font-size: 0.85rem;
-  font-weight: 700;
-  color: #3e2723;
-  margin-bottom: 8px;
-}
-.login-form .form-group label i {
-  margin-right: 5px;
-  opacity: 0.7;
-}
-.login-form .form-group input {
-  width: 100%;
-  padding: 14px;
-  border: 1px solid #e0e0e0;
-  border-radius: 10px;
-  font-family: inherit;
-  outline: none;
-  transition: all 0.3s ease;
-}
-.login-form .form-group input:focus {
-  border-color: #3e2723;
-  box-shadow: 0 0 8px rgba(62, 39, 35, 0.15);
-}
-
-.btn-login {
-  width: 100%;
-  padding: 15px;
-  background-color: #3e2723;
-  color: white;
-  border: none;
-  border-radius: 10px;
-  font-size: 1rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition: transform 0.2s, background 0.3s;
-}
-.btn-login:hover {
-  background-color: rgb(29.4020618557, 18.4948453608, 16.5979381443);
-  transform: translateY(-2px);
-}
-
-.login-footer {
-  margin-top: 25px;
-}
-.login-footer hr {
-  border: 0;
-  border-top: 1px solid #eee;
-  margin: 20px 0;
-}
-.login-footer .forgot-pass {
-  color: #999;
-  text-decoration: none;
-  font-size: 0.85rem;
-}
-.login-footer .forgot-pass:hover {
-  color: #3e2723;
-}
-.login-footer .no-account {
-  font-size: 0.85rem;
-  color: #666;
-  margin-bottom: 5px;
 }/*# sourceMappingURL=main.css.map */
