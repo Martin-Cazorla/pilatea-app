@@ -1,42 +1,47 @@
-#calendar-container {
-    padding: 50px 5%;
+.reservation-container {
+    padding: 40px 5%;
+    max-width: 1000px;
+    margin: 0 auto;
     text-align: center;
 
     h2 {
-        margin-bottom: 30px;
+        margin-bottom: 20px;
         color: $color-texto;
     }
 
-    .class-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        gap: 20px;
-    }
-
-    .class-card {
-        background: #f1efe7;
-        padding: 25px;
-        border-radius: 10px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    .date-selector {
+        margin-bottom: 40px;
+        background: #f1efe7; // Un tono similar a tus cards
+        padding: 20px;
+        border-radius: 8px;
+        display: inline-block;
         border: 1px solid #eee;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        transition: 0.3s;
 
-        &:hover {
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        label {
+            font-weight: bold;
+            margin-right: 10px;
+            color: $color-texto;
         }
 
-        h3 {
-            color: $color-principal;
-            margin-bottom: 15px;
-        }
-
-        p {
-            color: #666;
-            margin-bottom: 20px;
-            font-size: 0.95rem;
+        input {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            outline: none;
+            
+            &:focus {
+                border-color: $color-principal;
+            }
         }
     }
+}
+
+// Contenedor de la grilla (ID y Clase para asegurar compatibilidad)
+#time-slots-grid, .time-slots-grid {
+    display: grid;
+    // Diseño adaptable: columnas de mínimo 140px que llenan el espacio
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 15px;
+    padding: 20px 0;
+    width: 100%;
 }
