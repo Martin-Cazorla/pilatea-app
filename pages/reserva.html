@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reservar Turno - Pilatea</title>
     <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
     <header class="main-header">
@@ -18,14 +19,39 @@
     </header>
 
     <main class="reservation-container">
-        <h2>Seleccioná tu horario</h2>
-        <div class="date-selector">
-            <label>Fecha:</label>
-            <input type="date" id="reservation-date" min="2026-02-10">
-        </div>
+        <div class="booking-wrapper">
+            <div class="calendar-column">
+                <div class="calendar-header">
+                    <button id="prev-month"><i class="fa-solid fa-chevron-left"></i></button>
+                    <h3 id="calendar-month-year">febrero 2026</h3>
+                    <button id="next-month"><i class="fa-solid fa-chevron-right"></i></button>
+                </div>
+                
+                <div class="calendar-grid">
+                    <div class="day-name">DOM.</div><div class="day-name">LUN.</div>
+                    <div class="day-name">MAR.</div><div class="day-name">MIÉ.</div>
+                    <div class="day-name">JUE.</div><div class="day-name">VIE.</div>
+                    <div class="day-name">SÁB.</div>
+                    <div id="calendar-days" class="days-container"></div>
+                </div>
 
-        <div id="time-slots-grid" class="time-slots-grid">
-            <p>Cargando horarios disponibles...</p>
+                <div class="booking-info">
+                    <p><i class="fa-solid fa-earth-americas"></i> Zona horaria: Buenos Aires</p>
+                </div>
+            </div>
+
+            <div class="time-column">
+                <h3 id="selected-date-display">Selecciona un día</h3>
+                <div id="time-slots-grid" class="time-slots-vertical">
+                    <p class="empty-msg">Selecciona un día para ver horarios.</p>
+                </div>
+            </div>
+
+            <section class="user-reservations">
+                <h3 id="summary-title">Mis Clases</h3>
+                <ul id="reservation-list" class="reservation-list">
+                    </ul>
+            </section>
         </div>
     </main>
 
@@ -34,30 +60,14 @@
             <div class="footer-info">
                 <p><strong>Estudio Pilatea</strong> | Miguel Soler 311 | Contacto: +54 9 11 25922054</p>
             </div>
-        
             <div class="social-links">
-                <a href="https://instagram.com/tucuenta" target="_blank" class="social-icon">
-                    <i class="fa-brands fa-instagram"></i>
-                </a>
-                <a href="https://wa.me/5491125922054" target="_blank" class="social-icon">
-                    <i class="fa-brands fa-whatsapp"></i>
-                </a>
+                <a href="#" target="_blank" class="social-icon"><i class="fa-brands fa-instagram"></i></a>
+                <a href="#" target="_blank" class="social-icon"><i class="fa-brands fa-whatsapp"></i></a>
             </div>
         </div>
-
-        <div class="copyright">
-            &copy; 2026 Cazorla Estudio - Todos los derechos reservados.
-        </div>
+        <div class="copyright">&copy; 2026 Cazorla Estudio - Todos los derechos reservados.</div>
     </footer>
 
-    <script type="importmap">
-      {
-        "imports": {
-          "firebase/app": "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js",
-          "firebase/firestore": "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js"
-        }
-      }
-    </script>
     <script type="module" src="../js/reservation.js"></script>
 </body>
 </html>

@@ -1,47 +1,122 @@
 .reservation-container {
-    padding: 40px 5%;
-    max-width: 1000px;
+    padding: 60px 5%;
+    max-width: 1400px; // Aumentado para las 3 columnas
     margin: 0 auto;
-    text-align: center;
+}
 
-    h2 {
+.booking-wrapper {
+    display: flex;
+    gap: 30px;
+    background: #fff;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    flex-wrap: wrap; // Importante para responsive
+}
+
+.calendar-column {
+    flex: 1.2;
+    min-width: 300px;
+    border-right: 1px solid #eee;
+    padding-right: 20px;
+
+    .calendar-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
         margin-bottom: 20px;
-        color: $color-texto;
+        h3 { text-transform: capitalize; font-size: 1.1rem; color: $color-texto; }
+        button { background: none; border: none; color: $color-principal; cursor: pointer; }
     }
 
-    .date-selector {
-        margin-bottom: 40px;
-        background: #f1efe7; // Un tono similar a tus cards
-        padding: 20px;
-        border-radius: 8px;
-        display: inline-block;
-        border: 1px solid #eee;
+    .calendar-grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        text-align: center;
+        .day-name { font-size: 0.7rem; font-weight: bold; color: #999; padding-bottom: 10px; }
+    }
 
-        label {
-            font-weight: bold;
-            margin-right: 10px;
-            color: $color-texto;
+    .days-container {
+        display: contents;
+        .day {
+            aspect-ratio: 1 / 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border-radius: 50%;
+            border: none;
+            background: transparent;
+            &.active { background-color: $color-principal !important; color: white !important; }
+            &.today { font-weight: bold; color: $color-principal; text-decoration: underline; }
+            &.past-day { color: #ccc; cursor: not-allowed; }
+            &:hover:not(.empty):not(.past-day) { background: rgba($color-principal, 0.1); }
         }
+    }
+}
 
-        input {
-            padding: 8px;
-            border: 1px solid #ccc;
+.time-column {
+    flex: 1;
+    min-width: 280px;
+    border-right: 1px solid #eee;
+    padding-right: 20px;
+
+    .time-slots-vertical {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        .btn-slot {
+            background: #fff; border: 1px solid $color-principal; color: $color-principal;
+            padding: 15px; border-radius: 8px; cursor: pointer;
+            display: flex; justify-content: space-between;
+            &:hover:not(:disabled) { background: rgba($color-principal, 0.05); }
+            &.btn-full { border-color: #ddd; color: #999; cursor: not-allowed; }
+        }
+    }
+}
+
+// NUEVA COLUMNA: MIS RESERVAS
+.user-reservations {
+    flex: 1;
+    min-width: 300px;
+    background-color: #fcfcfc;
+    padding: 20px;
+    border-radius: 12px;
+
+    h3 {
+        color: $color-principal;
+        border-bottom: 2px solid rgba($color-principal, 0.2);
+        padding-bottom: 10px;
+        margin-bottom: 15px;
+    }
+
+    .reservation-list {
+        list-style: none;
+        padding: 0;
+
+        .reservation-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            margin-bottom: 10px;
+            background: #fff;
+            border-left: 5px solid $color-principal;
             border-radius: 4px;
-            outline: none;
-            
-            &:focus {
-                border-color: $color-principal;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+
+            .res-date { display: block; font-weight: bold; font-size: 0.85rem; }
+            .res-time { font-size: 0.8rem; color: #666; }
+
+            .btn-cancel {
+                background: #ff5252; color: white; border: none;
+                padding: 6px 8px; border-radius: 4px; cursor: pointer;
+                &:hover { background: #d32f2f; }
             }
         }
     }
 }
 
-// Contenedor de la grilla (ID y Clase para asegurar compatibilidad)
-#time-slots-grid, .time-slots-grid {
-    display: grid;
-    // Diseño adaptable: columnas de mínimo 140px que llenan el espacio
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-    gap: 15px;
-    padding: 20px 0;
-    width: 100%;
+@media (max-width: 1024px) {
+    .calendar-column, .time-column { border-right: none; padding-right: 0; }
 }
