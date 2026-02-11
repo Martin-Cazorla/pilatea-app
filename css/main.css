@@ -30,6 +30,12 @@ main, #calendar-container {
   background-size: cover;
 }
 
+.page-config {
+  background: linear-gradient(rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.6)), url("../../assets/img/1000294789.jpg") no-repeat center center fixed;
+  background-size: cover;
+  min-height: 100vh;
+}
+
 .btn-primary, .btn-reserva, .btn-login {
   display: inline-block;
   background-color: #5d4037;

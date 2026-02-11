@@ -19,8 +19,11 @@
     background-size: cover;
 }
 
+// Fondo para Configuración (Luminoso y Profesional)
 .page-config {
+    // Usamos una ruta que suba un nivel desde la carpeta /css/ para entrar a /assets/
     background: linear-gradient(rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.6)), 
                 url('../../assets/img/1000294789.jpg') no-repeat center center fixed;
     background-size: cover;
+    min-height: 100vh; // Asegura que el fondo cubra toda la pantalla
 }
