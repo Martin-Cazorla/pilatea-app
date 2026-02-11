@@ -1,0 +1,52 @@
+// Archivo: _index.scss
+.main-content {
+    padding: 40px 5%;
+    text-align: center;
+
+    .hero-section {
+        background-color: #fcfaf5;
+        padding: 60px 20px;
+        border-radius: 20px;
+        margin-bottom: 40px;
+
+        h1 {
+            font-family: $fuente-principal;
+            color: $color-texto;
+            font-size: 2.5rem; 
+            margin-bottom: 20px;
+        }
+
+        p {
+            color: #666;
+            max-width: 600px;
+            margin: 0 auto 30px;
+        }
+    }
+}
+
+// Botones generales del sitio público
+.btn-reserva {
+    background-color: $color-principal;
+    color: white;
+    padding: 12px 25px;
+    border-radius: 30px;
+    text-decoration: none;
+    font-weight: bold;
+    display: inline-block;
+    transition: all 0.3s ease;
+
+    &:hover {
+        background-color: $color-acento;
+        transform: scale(1.05);
+    }
+}
+
+// Footer específico del sitio
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 5%;
+    background-color: white;
+    border-top: 1px solid #eee;
+}

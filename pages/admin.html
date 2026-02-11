@@ -2,6 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pilatea - Panel de Gestión</title>
     <link rel="stylesheet" href="../css/main.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -11,7 +12,9 @@
 
     <header class="main-header">
         <div class="logo-container">
-            <img src="../assets/img/logo-pilatea-removebg-preview.png" alt="Logo">
+            <a href="../index.html">
+                <img src="../assets/img/logo-pilatea-removebg-preview.png" alt="Logo">
+            </a>
         </div>
         <div class="header-actions">
             <a href="../index.html" class="btn-back">Volver al Sitio</a>
@@ -28,22 +31,22 @@
 
         <div class="admin-summary">
             <div class="summary-card">
-                <span class="label">Clases Hoy</span>
-                <span class="value">5</span>
+                <span class="label">Clases (Reservas) Hoy</span>
+                <span class="value" id="dash-clases-hoy">0</span>
             </div>
             <div class="summary-card">
-                <span class="label">Alumnos Totales</span>
-                <span class="value">24</span>
+                <span class="label">Alumnos Registrados</span>
+                <span class="value" id="dash-alumnos-totales">0</span>
             </div>
             <div class="summary-card">
-                <span class="label">Cupos Disponibles</span>
-                <span class="value">8</span>
+                <span class="label">Cupos Libres Hoy</span>
+                <span class="value" id="dash-cupos-hoy">0</span>
             </div>
         </div>
 
         <div class="admin-filters">
             <div class="filter-group">
-                <label for="filter-date">Fecha:</label>
+                <label for="filter-date">Fecha de Gestión:</label>
                 <input type="date" id="filter-date" class="input-calendar">
             </div>
 
@@ -52,28 +55,13 @@
                 <select id="filter-class" class="select-filter">
                     <option value="all">Todas las clases</option>
                     <option value="reformer">Pilates Reformer</option>
-                    <option value="barre">Hiit Barre</option>
-                    <option value="yoga">Yoga</option>
                 </select>
+            </div>
+            <button class="btn-primary" id="btn-refresh">Actualizar Vista</button>
         </div>
 
-    <button class="btn-primary">Actualizar Vista</button>
-</div>
-
-        <div class="table-wrapper">
-            <table class="admin-table">
-                <thead>
-                    <tr>
-                        <th>Alumno</th>
-                        <th>Clase</th>
-                        <th>Horario</th>
-                        <th>Estado</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    </tbody>
-            </table>
+        <div id="daily-schedule-container" class="schedule-container">
+            <p class="loading-text">Cargando cronograma del día...</p>
         </div>
     </main>
 
@@ -82,21 +70,16 @@
             <div class="footer-info">
                 <p><strong>Estudio Pilatea</strong> | Miguel Soler 311 | Contacto: +54 9 11 25922054</p>
             </div>
-        
             <div class="social-links">
-                <a href="https://instagram.com/tucuenta" target="_blank" class="social-icon">
-                    <i class="fa-brands fa-instagram"></i>
-                </a>
-                <a href="https://wa.me/5491125922054" target="_blank" class="social-icon">
-                    <i class="fa-brands fa-whatsapp"></i>
-                </a>
+                <a href="#" target="_blank" class="social-icon"><i class="fa-brands fa-instagram"></i></a>
+                <a href="#" target="_blank" class="social-icon"><i class="fa-brands fa-whatsapp"></i></a>
             </div>
         </div>
-
         <div class="copyright">
-            &copy; Cazorla Estudio - Todos los derechos reservados.
+            &copy; 2026 Cazorla Estudio - Todos los derechos reservados.
         </div>
     </footer>
 
-    </body>
+    <script type="module" src="../js/admin.js"></script>
+</body>
 </html>

@@ -66,6 +66,50 @@ main, #calendar-container {
   transform: translateY(0);
 }
 
+.btn-slot {
+  background: #ffffff;
+  border: 2px solid #5d4037;
+  padding: 20px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+.btn-slot span {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #5d4037;
+}
+.btn-slot small {
+  color: #666;
+}
+.btn-slot:hover:not(:disabled) {
+  background: #5d4037;
+  transform: translateY(-3px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+.btn-slot:hover:not(:disabled) span, .btn-slot:hover:not(:disabled) small {
+  color: white;
+}
+.btn-slot:disabled, .btn-slot.btn-full {
+  background-color: #e0e0e0;
+  color: #a0a0a0;
+  cursor: not-allowed;
+  border: 2px solid #ccc;
+  transform: none;
+  box-shadow: none;
+}
+.btn-slot:disabled span, .btn-slot.btn-full span {
+  color: #999;
+}
+.btn-slot:disabled small, .btn-slot.btn-full small {
+  color: #d9534f;
+  font-weight: bold;
+}
+
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -267,41 +311,91 @@ footer .copyright {
   background-color: rgb(62.0967741935, 87.5, 112.9032258065);
 }
 
-#calendar-container {
-  padding: 50px 5%;
+.main-content {
+  padding: 40px 5%;
   text-align: center;
 }
-#calendar-container h2 {
-  margin-bottom: 30px;
+.main-content .hero-section {
+  background-color: #fcfaf5;
+  padding: 60px 20px;
+  border-radius: 20px;
+  margin-bottom: 40px;
+}
+.main-content .hero-section h1 {
+  font-family: "Helvetica Neue", sans-serif;
+  color: #212121;
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+}
+.main-content .hero-section p {
+  color: #666;
+  max-width: 600px;
+  margin: 0 auto 30px;
+}
+
+.btn-reserva {
+  background-color: #5d4037;
+  color: white;
+  padding: 12px 25px;
+  border-radius: 30px;
+  text-decoration: none;
+  font-weight: bold;
+  display: inline-block;
+  transition: all 0.3s ease;
+}
+.btn-reserva:hover {
+  background-color: #3e2723;
+  transform: scale(1.05);
+}
+
+.footer-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 5%;
+  background-color: white;
+  border-top: 1px solid #eee;
+}
+
+.reservation-container {
+  padding: 40px 5%;
+  max-width: 1000px;
+  margin: 0 auto;
+  text-align: center;
+}
+.reservation-container h2 {
+  margin-bottom: 20px;
   color: #212121;
 }
-#calendar-container .class-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 20px;
-}
-#calendar-container .class-card {
+.reservation-container .date-selector {
+  margin-bottom: 40px;
   background: #f1efe7;
-  padding: 25px;
-  border-radius: 10px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  padding: 20px;
+  border-radius: 8px;
+  display: inline-block;
   border: 1px solid #eee;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  transition: 0.3s;
 }
-#calendar-container .class-card:hover {
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+.reservation-container .date-selector label {
+  font-weight: bold;
+  margin-right: 10px;
+  color: #212121;
 }
-#calendar-container .class-card h3 {
-  color: #5d4037;
-  margin-bottom: 15px;
+.reservation-container .date-selector input {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  outline: none;
 }
-#calendar-container .class-card p {
-  color: #666;
-  margin-bottom: 20px;
-  font-size: 0.95rem;
+.reservation-container .date-selector input:focus {
+  border-color: #5d4037;
+}
+
+#time-slots-grid, .time-slots-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 15px;
+  padding: 20px 0;
+  width: 100%;
 }
 
 .admin-container {
@@ -314,26 +408,27 @@ footer .copyright {
   font-family: "Helvetica Neue", sans-serif;
 }
 
-.admin-header {
+.admin-nav-tabs {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  gap: 10px;
   margin-bottom: 20px;
+  border-bottom: 1px solid #ddd;
 }
-.admin-header .btn-back {
+.admin-nav-tabs .tab-link {
   text-decoration: none;
-  color: #5d4037;
-  border: 1px solid #5d4037;
-  padding: 8px 16px;
-  border-radius: 6px;
-  font-size: 0.85rem;
-  font-weight: bold;
-  transition: all 0.3s ease;
+  padding: 10px 20px;
+  color: #666;
+  background: #f8f9fa;
+  border-radius: 8px 8px 0 0;
+  transition: 0.3s;
 }
-.admin-header .btn-back:hover {
-  background-color: #5d4037;
+.admin-nav-tabs .tab-link.active {
+  background: #3e2723;
   color: white;
-  transform: translateY(-2px);
+  font-weight: bold;
+}
+.admin-nav-tabs .tab-link:hover:not(.active) {
+  background: #eee;
 }
 
 .admin-summary {
@@ -379,114 +474,88 @@ footer .copyright {
 .admin-filters .filter-group label {
   font-weight: bold;
   font-size: 0.9rem;
-  color: #212121;
 }
 .admin-filters .input-calendar, .admin-filters .select-filter {
   padding: 8px 12px;
   border: 1px solid #ddd;
   border-radius: 5px;
-  background-color: white;
-  font-family: "Helvetica Neue", sans-serif;
   outline: none;
 }
 .admin-filters .input-calendar:focus, .admin-filters .select-filter:focus {
   border-color: #3e2723;
 }
-.admin-filters .btn-update {
-  background-color: #5d4037;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
-  cursor: pointer;
-  font-weight: bold;
-  transition: background 0.3s;
-}
-.admin-filters .btn-update:hover {
-  background-color: #3e2723;
+
+.schedule-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+  padding: 20px 0;
 }
 
-.table-wrapper {
-  background: white;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-  overflow-x: auto;
-}
-
-.admin-table {
-  width: 100%;
-  border-collapse: collapse;
-  text-align: left;
-  background-color: #f1efe7;
+.time-block-card {
+  background: #fff;
   border-radius: 12px;
-  overflow: hidden;
-  margin-top: 20px;
-}
-.admin-table th {
-  background-color: #3e2723;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  border-left: 5px solid #5d4037;
   padding: 15px;
-  color: white;
-  text-transform: uppercase;
-  font-size: 0.8rem;
-  letter-spacing: 1px;
+  transition: transform 0.2s;
 }
-.admin-table td {
-  padding: 15px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+.time-block-card:hover {
+  transform: translateY(-3px);
+}
+.time-block-card.full {
+  border-left-color: #d32f2f;
+  background: #fff8f8;
+}
+
+.time-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+}
+.time-header .time-badge {
+  font-weight: bold;
+  font-size: 1.1rem;
+  color: #212121;
+}
+.time-header .occupancy-info {
+  font-size: 0.85rem;
+  color: #777;
+}
+.time-header .occupancy-info i {
+  margin-right: 5px;
+}
+
+.student-mini-list {
+  list-style: none;
+  padding: 0;
+}
+.student-mini-list li {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0;
+  font-size: 0.9rem;
+  border-bottom: 1px dashed #eee;
   color: #555;
 }
-.admin-table tr:hover {
-  background-color: rgba(0, 0, 0, 0.02);
-}
-.admin-table .status {
-  padding: 5px 10px;
-  border-radius: 15px;
-  font-size: 0.75rem;
-  font-weight: bold;
-}
-.admin-table .status.confirmed {
-  background: #d4edda;
-  color: #155724;
-}
-.admin-table .status.pending {
-  background: #fff3cd;
-  color: #856404;
-}
-.admin-table .btn-edit {
-  background: none;
+.student-mini-list li.empty-slot {
+  color: #bbb;
+  font-style: italic;
   border: none;
-  color: #3e2723;
-  cursor: pointer;
-  font-size: 1.1rem;
-  transition: 0.3s;
-}
-.admin-table .btn-edit:hover {
-  color: #5d4037;
-  transform: scale(1.1);
 }
 
-.admin-nav-tabs {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
-  border-bottom: 1px solid #ddd;
+.btn-cancel-mini {
+  background: none;
+  border: none;
+  color: #ff5252;
+  cursor: pointer;
+  font-size: 1.2rem;
 }
-.admin-nav-tabs .tab-link {
-  text-decoration: none;
-  padding: 10px 20px;
-  color: #666;
-  background: #f8f9fa;
-  border-radius: 8px 8px 0 0;
-  transition: 0.3s;
-}
-.admin-nav-tabs .tab-link.active {
-  background: #3e2723;
-  color: white;
-  font-weight: bold;
-}
-.admin-nav-tabs .tab-link:hover:not(.active) {
-  background: #eee;
+.btn-cancel-mini:hover {
+  color: #ff1f1f;
 }
 
 .admin-config-container {
