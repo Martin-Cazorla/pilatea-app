@@ -39,6 +39,12 @@ main, #calendar-container {
   min-height: 100vh;
 }
 
+.page-config {
+  background: linear-gradient(rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.6)), url("../assets/img/1000294786.jpg") no-repeat center center fixed !important;
+  background-size: cover;
+  min-height: 100vh;
+}
+
 .btn-primary, .btn-reserva, .btn-login {
   display: inline-block;
   background-color: #5d4037;
