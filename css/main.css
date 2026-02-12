@@ -22,14 +22,14 @@ main, #calendar-container {
 }
 
 .page-reserva {
-  background: linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5)), url("../assets/img/1000294795.jpg") no-repeat center center fixed !important;
-  background-size: cover;
+  background: linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5)), url("../assets/img/1000294795.jpg") no-repeat center top/cover !important;
+  background-size: scroll;
   min-height: 100vh;
 }
 
 .page-admin {
-  background: linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5)), url("../assets/img/admin-bg.jpg") no-repeat center center fixed !important;
-  background-size: cover;
+  background: linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5)), url("../assets/img/admin-bg.jpg") no-repeat center top/cover !important;
+  background-size: scroll;
   min-height: 100vh;
 }
 
