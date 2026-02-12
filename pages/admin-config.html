@@ -24,24 +24,33 @@
 
         <section class="config-section">
             <h3><i class="fa-solid fa-users"></i> Gestión de Alumnos</h3>
-            <div class="actions-grid">
-                <button class="btn-action" onclick="openModal('add-student')">Nuevo Alumno</button>
-                <button class="btn-action" onclick="openModal('add-credits')">Cargar Créditos</button>
+    
+            <div class="actions-grid-admin">
+                <div class="search-container">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" id="search-student" placeholder="Buscar por nombre o email...">
+                </div>
+                <div class="btn-group-admin">
+                    <button class="btn-action-small" onclick="openModal('add-student')">Nuevo Alumno</button>
+                    <button class="btn-action-small" onclick="openModal('add-credits')">Cargar Créditos</button>
+                </div>
             </div>
-        
-            <div class="table-wrapper">
-                <table class="admin-table">
-                    <thead>
-                        <tr>
-                            <th>Nombre</th>
-                            <th>Email</th>
-                            <th>Créditos Disp.</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody id="student-list">
-                        </tbody>
-                </table>
+
+            <div class="table-scroll-container">
+                <div class="table-responsive">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Email</th>
+                                <th>Créditos</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="student-list">
+                            </tbody>
+                    </table>
+                </div>
             </div>
         </section>
 
@@ -78,21 +87,22 @@
     <div id="modal-credits" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-header">
-                <h3><i class="fa-solid fa-ticket"></i> Cargar Créditos</h3>
+                <h3>Cargar Créditos</h3>
                 <button class="close-modal" onclick="closeModal('modal-credits')">&times;</button>
             </div>
             <form id="form-add-credits" class="modal-body">
-                <div class="input-group">
-                    <label>Seleccionar Alumno</label>
-                    <select id="select-student-credits" class="select-filter" required>
-                        <option value="">Cargando alumnos...</option>
+                <div class="search-select-container">
+                    <label>Buscar alumno:</label>
+                    <input type="text" id="search-student-modal" placeholder="Escribe para filtrar...">
+                    <select id="select-student-credits" required>
+                        <option value="">Seleccione un alumno...</option>
                     </select>
                 </div>
                 <div class="input-group">
-                    <label>Cantidad de Unidades (Créditos)</label>
-                    <input type="number" id="input-credits-amount" min="1" value="8">
+                    <label>Cantidad de créditos:</label>
+                    <input type="number" id="input-credits-amount" min="1" value="4" required>
                 </div>
-                <button type="submit" class="btn-action">Confirmar Carga</button>
+                <button type="submit" class="btn-primary">Confirmar Carga</button>
             </form>
         </div>
     </div>

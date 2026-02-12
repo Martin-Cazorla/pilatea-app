@@ -26,6 +26,13 @@
     }
 }
 
+// En scss/components/_buttons.scss
+.btn-action-small {
+    @extend .btn-primary;
+    padding: 10px 18px;
+    font-size: 0.75rem;
+}
+
 // Otros botones (Mantenemos por compatibilidad)
 .btn-reserva, .btn-login {
     @extend .btn-primary; // Hereda lo anterior
