@@ -16,31 +16,25 @@ main, #calendar-container {
 }
 
 .page-home {
-  background: linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5)), url("../assets/img/home-bg2.jpg") no-repeat center top/cover;
+  background: linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5)), url("../assets/img/home-bg2.jpg") no-repeat center top/cover !important;
   background-attachment: scroll;
   min-height: 100vh;
 }
 
 .page-reserva {
-  background: linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5)), url("../assets/img/1000294795.jpg") no-repeat center center fixed;
+  background: linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5)), url("../assets/img/1000294795.jpg") no-repeat center center fixed !important;
   background-size: cover;
   min-height: 100vh;
 }
 
 .page-admin {
-  background: linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5)), url("../assets/img/admin-bg.jpg") no-repeat center center fixed;
+  background: linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5)), url("../assets/img/admin-bg.jpg") no-repeat center center fixed !important;
   background-size: cover;
   min-height: 100vh;
 }
 
 .page-config {
-  background: linear-gradient(rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.6)), url("../assets/img/1000294789.jpg") no-repeat center center fixed;
-  background-size: cover;
-  min-height: 100vh;
-}
-
-.page-login {
-  background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url("../assets/img/1000294786.jpg") no-repeat center center fixed;
+  background: linear-gradient(rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.6)), url("../assets/img/1000294789.jpg") no-repeat center center fixed !important;
   background-size: cover;
   min-height: 100vh;
 }
