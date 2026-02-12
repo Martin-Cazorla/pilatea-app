@@ -1,7 +1,7 @@
 // Fondo para la Home (Index.html)
 .page-home {
     background: linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5)), 
-                url('../../assets/img/home-bg2.jpg') no-repeat center top / cover;
+                url('../assets/img/home-bg2.jpg') no-repeat center top / cover;
     background-attachment: scroll;
     min-height: 100vh;
 }
@@ -9,7 +9,7 @@
 // Fondo para Reservas (reserva.html)
 .page-reserva {
     background: linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5)), 
-                url('../../assets/img/1000294795.jpg') no-repeat center center fixed;
+                url('../assets/img/1000294795.jpg') no-repeat center center fixed;
     background-size: cover;
     min-height: 100vh;
 }
@@ -17,7 +17,7 @@
 // Fondo para Admin (admin.html)
 .page-admin {
     background: linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5)),
-                url('../../assets/img/admin-bg.jpg') no-repeat center center fixed;
+                url('../assets/img/admin-bg.jpg') no-repeat center center fixed;
     background-size: cover;
     min-height: 100vh;
 }
@@ -25,7 +25,7 @@
 // Fondo para Configuración (admin-config.html)
 .page-config {
     background: linear-gradient(rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.6)), 
-                url('../../assets/img/1000294789.jpg') no-repeat center center fixed;
+                url('../assets/img/1000294789.jpg') no-repeat center center fixed;
     background-size: cover;
     min-height: 100vh;
 }
@@ -33,7 +33,7 @@
 // Fondo para Login (login.html)
 .page-login {
     background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), 
-                url('../../assets/img/1000294786.jpg') no-repeat center center fixed;
+                url('../assets/img/1000294786.jpg') no-repeat center center fixed;
     background-size: cover;
     min-height: 100vh;
 }
