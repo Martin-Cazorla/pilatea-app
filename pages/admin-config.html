@@ -44,25 +44,13 @@
                 </table>
             </div>
         </section>
+
         <section class="config-section">
             <h3><i class="fa-solid fa-gear"></i> Configuración de Clases</h3>
-            <div class="classes-grid">
-                <div class="class-config-card">
-                    <h4>Pilates Reformer</h4>
-                    <div class="input-group">
-                        <label>Vacantes por hora:</label>
-                        <input type="number" id="config-vacantes" value="5" class="select-filter">
-                    </div>
-                    <div class="input-group">
-                        <label>Horario Inicio:</label>
-                        <input type="time" id="config-inicio" value="08:00" class="input-calendar">
-                    </div>
-                    <div class="input-group">
-                        <label>Horario Fin (Último turno):</label>
-                        <input type="time" id="config-fin" value="20:00" class="input-calendar">
-                    </div>
-                    <button id="btn-save-config" class="btn-action btn-save">Guardar Cambios</button>
+            <div id="disciplinas-container" class="classes-grid">
                 </div>
+            <div class="save-all-container" style="margin-top: 20px; text-align: center;">
+                <button id="btn-save-config" class="btn-action btn-save">Guardar Toda la Configuración</button>
             </div>
         </section>
     </main>

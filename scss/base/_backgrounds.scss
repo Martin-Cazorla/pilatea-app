@@ -22,19 +22,3 @@
     min-height: 100vh;
 }
 
-// Fondo para Configuración (admin-config.html)
-.page-config {
-    background: linear-gradient(rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.6)), 
-                url('../assets/img/1000294789.jpg') no-repeat center center fixed !important;
-    background-size: cover;
-    min-height: 100vh;
-    display: block; // Aseguramos que el body tenga cuerpo
-}
-
-// Fondo para Login (login.html)
-.page-login {
-    background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), 
-                url('../assets/img/1000294786.jpg') no-repeat center center fixed !important;
-    background-size: cover;
-    min-height: 100vh;
-}
