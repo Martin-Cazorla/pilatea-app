@@ -1,29 +1,39 @@
-// Fondo para la Home (Index)
+// Fondo para la Home (Index.html)
 .page-home {
     background: linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5)), 
-                url('../../assets/img/home-bg2.jpg') no-repeat center top / cover;
-    background-attachment: scroll; // Cambiamos fixed por scroll para evitar el zoom excesivo
+                url('../assets/img/home-bg2.jpg') no-repeat center top / cover;
+    background-attachment: scroll;
+    min-height: 100vh;
 }
 
-// Fondo para Reservas (Algo más relajante)
+// Fondo para Reservas (reserva.html)
 .page-reserva {
     background: linear-gradient(rgba(168, 218, 220, 0.8), rgba(168, 218, 220, 0.8)), 
-                url('../../assets/img/1000294795.jpg') no-repeat center center fixed;
+                url('../assets/img/1000294795.jpg') no-repeat center center fixed;
     background-size: cover;
+    min-height: 100vh;
 }
 
-// Fondo para Admin (Más limpio/profesional, tipo dashboard)
+// Fondo para Admin (admin.html)
 .page-admin {
     background: linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5)),
-                url('../../assets/img/admin-bg.jpg') no-repeat center center fixed;
+                url('../assets/img/admin-bg.jpg') no-repeat center center fixed;
     background-size: cover;
+    min-height: 100vh;
 }
 
-// Fondo para Configuración (Luminoso y Profesional)
+// Fondo para Configuración (admin-config.html)
 .page-config {
-    // Usamos una ruta que suba un nivel desde la carpeta /css/ para entrar a /assets/
     background: linear-gradient(rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.6)), 
-                url('../../assets/img/1000294789.jpg') no-repeat center center fixed;
+                url('../assets/img/1000294789.jpg') no-repeat center center fixed;
     background-size: cover;
-    min-height: 100vh; // Asegura que el fondo cubra toda la pantalla
+    min-height: 100vh;
+}
+
+// Fondo para Login (login.html)
+.page-login {
+    background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), 
+                url('../assets/img/1000294783.jpg') no-repeat center center fixed;
+    background-size: cover;
+    min-height: 100vh;
 }
