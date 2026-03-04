@@ -6,6 +6,11 @@
     <title>Pilatea - Panel de Gestión</title>
     <link rel="stylesheet" href="../css/main.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <script type="module">
+        import { protectAdminRoute } from '../js/auth/route-guard.js';
+        protectAdminRoute();
+    </script>
 </head>
 
 <body class="page-admin">
@@ -13,38 +18,38 @@
     <header class="main-header">
         <div class="logo-container">
             <a href="../index.html">
-                <img src="../assets/img/logo-pilatea-removebg-preview.png" alt="Logo">
+                <img src="../assets/img/logo-pilatea-removebg-preview.png" alt="Pilatea - Volver al inicio">
             </a>
         </div>
-        <div class="header-actions">
+        <nav class="header-actions" aria-label="Acciones de administrador">
             <a href="../index.html" class="btn-back">Volver al Sitio</a>
-        </div>
+        </nav>
     </header>
 
     <main class="admin-container">
-        <h2>Panel de Control - Gestión de Clases</h2>
+        <h1>Panel de Control - Gestión de Clases</h1>
 
-        <div class="admin-nav-tabs">
+        <nav class="admin-nav-tabs" aria-label="Secciones de administración">
             <a href="admin.html" class="tab-link active">Gestión Diaria</a>
             <a href="admin-config.html" class="tab-link">Configuración de Sistema</a>
-        </div>
+        </nav>
 
-        <div class="admin-summary">
-            <div class="summary-card">
+        <section class="admin-summary" aria-label="Resumen de actividad">
+            <article class="summary-card">
                 <span class="label">Clases (Reservas) Hoy</span>
                 <span class="value" id="dash-clases-hoy">0</span>
-            </div>
-            <div class="summary-card">
+            </article>
+            <article class="summary-card">
                 <span class="label">Alumnos Registrados</span>
                 <span class="value" id="dash-alumnos-totales">0</span>
-            </div>
-            <div class="summary-card">
+            </article>
+            <article class="summary-card">
                 <span class="label">Cupos Libres Hoy</span>
                 <span class="value" id="dash-cupos-hoy">0</span>
-            </div>
-        </div>
+            </article>
+        </section>
 
-        <div class="admin-filters">
+        <section class="admin-filters">
             <div class="filter-group">
                 <label for="filter-date">Fecha de Gestión:</label>
                 <input type="date" id="filter-date" class="input-calendar">
@@ -58,22 +63,22 @@
                 </select>
             </div>
             <button class="btn-primary" id="btn-refresh">Actualizar Vista</button>
-        </div>
+        </section>
 
         <div id="daily-schedule-container" class="schedule-container">
             <p class="loading-text">Cargando cronograma del día...</p>
         </div>
     </main>
 
-    <footer>
+    <footer class="main-footer">
         <div class="footer-content">
-            <div class="footer-info">
+            <address class="footer-info">
                 <p><strong>Estudio Pilatea</strong> | Miguel Soler 311 | Contacto: +54 9 11 25922054</p>
-            </div>
-            <div class="social-links">
-                <a href="#" target="_blank" class="social-icon"><i class="fa-brands fa-instagram"></i></a>
-                <a href="#" target="_blank" class="social-icon"><i class="fa-brands fa-whatsapp"></i></a>
-            </div>
+            </address>
+            <nav class="social-links" aria-label="Redes sociales">
+                <a href="#" target="_blank" class="social-icon" rel="noopener"><i class="fa-brands fa-instagram" aria-hidden="true"></i></a>
+                <a href="#" target="_blank" class="social-icon" rel="noopener"><i class="fa-brands fa-whatsapp" aria-hidden="true"></i></a>
+            </nav>
         </div>
         <div class="copyright">
             &copy; 2026 Cazorla Estudio - Todos los derechos reservados.

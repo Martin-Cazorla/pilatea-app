@@ -4,52 +4,46 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pilatea - Iniciar Sesión</title>
-    <link rel="stylesheet" href="../css/main.css"> </head>
-    
+    <link rel="stylesheet" href="../css/main.css"> 
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
     
 <body class="page-login">
 
     <div class="login-wrapper">
-        <div class="login-card">
-            <div class="login-header">
-                <img src="../assets/img/logo-pilatea-removebg-preview.png" alt="Logo Pilatea">
+        <main class="login-card">
+            <header class="login-header">
+                <img src="../assets/img/logo-pilatea-removebg-preview.png" alt="Estudio Pilatea">
+                <h1>Iniciar Sesión</h1>
                 <p>Ingresá para gestionar tus reservas</p>
-            </div>
+            </header>
 
-            <form class="login-form">
+            <div id="login-error" class="error-msg" role="alert" style="color: red; margin-bottom: 1rem; display: none;"></div>
+
+            <form id="login-form" class="login-form">
                 <div class="form-group">
-                    <label><i class="fa-solid fa-envelope"></i> Email</label>
-                    <input type="email" placeholder="ejemplo@mail.com" required>
+                    <label for="email"><i class="fa-solid fa-envelope" aria-hidden="true"></i> Email</label>
+                    <input type="email" id="email" placeholder="ejemplo@mail.com" required>
                 </div>
                 
                 <div class="form-group">
-                    <label><i class="fa-solid fa-lock"></i> Contraseña</label>
-                    <input type="password" placeholder="••••••••" required>
+                    <label for="password"><i class="fa-solid fa-lock" aria-hidden="true"></i> Contraseña</label>
+                    <input type="password" id="password" placeholder="••••••••" required>
                 </div>
             
                 <button type="submit" class="btn-login">Entrar</button>
             
-                <div class="login-footer">
+                <footer class="login-footer">
                     <a href="#" class="forgot-pass">¿Olvidaste tu contraseña?</a>
                     <hr>
                     <p class="no-account">¿No tenés cuenta?</p>
                     <p><strong>Contactanos en el local para registrarte</strong></p>
-                </div>
+                </footer>
             </form>
-        </div>
+        </main>
     </div>
 
-    <script type="importmap">
-        {
-            "imports": {
-            "firebase/app": "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js",
-            "firebase/auth": "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js"
-            }
-        }
-    </script>
-    <script type="module" src="../js/auth.js"></script>
-    
+    <script type="module" src="../js/auth/login.js"></script>
 </body>
 </html>
