@@ -1,4 +1,4 @@
-import { db, auth } from './config/firebase.js'; // Usamos la config centralizada
+import { db, auth } from './config/firebase.js'; 
 import { 
     doc, getDoc, collection, query, where, getDocs, 
     updateDoc, increment, addDoc, onSnapshot, deleteDoc 
@@ -12,6 +12,7 @@ const dateDisplay = document.getElementById('selected-date-display');
 const daysContainer = document.getElementById('calendar-days');
 const monthYearText = document.getElementById('calendar-month-year');
 const reservationList = document.getElementById('reservation-list');
+const classSelect = document.getElementById('class-select');
 
 // Estado
 let currentUser = null;
@@ -81,6 +82,16 @@ onAuthStateChanged(auth, (user) => {
                 userWelcome.innerHTML = `Hola, <strong>${data.nombre}</strong> (Créditos: ${userCredits})`;
             }
         });
+
+        // 1. DETECTAR CLASE DESDE URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const claseDesdeURL = urlParams.get('clase');
+
+        // 2. AJUSTAR SELECTOR SI VIENE DESDE HOME
+        if (claseDesdeURL && classSelect) {
+            classSelect.value = claseDesdeURL;
+        }
+
         fetchUserReservations();
         renderCalendar();
         updateDateDisplay();
@@ -89,6 +100,12 @@ onAuthStateChanged(auth, (user) => {
         window.location.href = "login.html";
     }
 });
+
+if(classSelect) {
+    classSelect.addEventListener('change', () => {
+        generateSlots(selectedDate.toISOString().split('T')[0]);
+    });
+}
 
 async function fetchUserReservations() {
     const q = query(collection(db, "reservas"), where("alumnoId", "==", currentUser.uid));
@@ -101,7 +118,7 @@ async function fetchUserReservations() {
             li.innerHTML = `
                 <div class="res-info">
                     <span class="res-date">${res.fecha}</span>
-                    <span class="res-time">${res.hora}hs</span>
+                    <span class="res-time">${res.hora}hs - <strong>${res.disciplina || 'Clase'}</strong></span>
                 </div>
                 <button class="btn-cancel" data-id="${doc.id}">
                     <i class="fa-solid fa-trash"></i>
@@ -116,13 +133,20 @@ async function fetchUserReservations() {
 async function handleReservation(time, dateStr) {
     if (userCredits <= 0) return alert("No tenés créditos disponibles.");
     
+    const selectedClassName = classSelect.options[classSelect.selectedIndex].text;
+    const selectedClassId = classSelect.value;
+
     try {
         const qDuplicado = query(collection(db, "reservas"), 
-            where("fecha", "==", dateStr), where("hora", "==", time), where("alumnoId", "==", currentUser.uid));
+            where("fecha", "==", dateStr), 
+            where("hora", "==", time), 
+            where("alumnoId", "==", currentUser.uid),
+            where("disciplinaId", "==", selectedClassId));
+            
         const snap = await getDocs(qDuplicado);
-        if (!snap.empty) return alert("Ya tenés una reserva para este horario.");
+        if (!snap.empty) return alert(`Ya tenés una reserva para ${selectedClassName} en este horario.`);
 
-        if (!confirm(`¿Confirmar reserva para el ${dateStr} a las ${time}hs?`)) return;
+        if (!confirm(`¿Confirmar reserva para ${selectedClassName} el ${dateStr} a las ${time}hs?`)) return;
 
         await updateDoc(doc(db, "alumnos", currentUser.uid), { creditos: increment(-1) });
         await addDoc(collection(db, "reservas"), {
@@ -130,14 +154,13 @@ async function handleReservation(time, dateStr) {
             alumnoNombre: userWelcome.querySelector('strong').innerText,
             fecha: dateStr,
             hora: time,
+            disciplina: selectedClassName,
+            disciplinaId: selectedClassId,
             fechaCreacion: new Date()
         });
         alert("¡Reserva confirmada!");
         generateSlots(dateStr);
-    } catch (e) { 
-        console.error(e);
-        alert("Error al procesar la reserva."); 
-    }
+    } catch (e) { console.error(e); }
 }
 
 async function handleCancel(reservationId) {
@@ -152,19 +175,22 @@ async function handleCancel(reservationId) {
 
 async function generateSlots(dateStr) {
     grid.innerHTML = "<p>Cargando horarios...</p>";
+    const selectedClassId = classSelect.value;
     
     try {
         const configSnap = await getDoc(doc(db, "configuracion", "clases"));
         if (!configSnap.exists()) {
-            grid.innerHTML = "<p>El administrador aún no ha configurado los horarios.</p>";
+            grid.innerHTML = "<p>Configuración no encontrada.</p>";
             return;
         }
 
         const configAll = configSnap.data();
-        // Usamos la configuración de 'reformer' como base por defecto
-        const config = configAll.reformer || { inicio: "08:00", fin: "21:00", vacantes: 5, bloqueados: "" };
+        const config = configAll[selectedClassId] || { inicio: "08:00", fin: "21:00", vacantes: 5, bloqueados: "" };
         
-        const q = query(collection(db, "reservas"), where("fecha", "==", dateStr));
+        const q = query(collection(db, "reservas"), 
+                        where("fecha", "==", dateStr),
+                        where("disciplinaId", "==", selectedClassId));
+
         const snap = await getDocs(q);
         const ocupacion = {};
         snap.forEach(d => ocupacion[d.data().hora] = (ocupacion[d.data().hora] || 0) + 1);
@@ -172,12 +198,10 @@ async function generateSlots(dateStr) {
         grid.innerHTML = '';
         const hInicio = parseInt(config.inicio.split(':')[0]);
         const hFin = parseInt(config.fin.split(':')[0]);
-        const horasBloqueadas = config.bloqueados.split(',').map(h => h.trim());
+        const horasBloqueadas = config.bloqueados ? config.bloqueados.split(',').map(h => h.trim()) : [];
 
         for (let h = hInicio; h <= hFin; h++) {
             const label = `${h.toString().padStart(2, '0')}:00`;
-            
-            // Saltamos si la hora está bloqueada
             if (horasBloqueadas.includes(label)) continue;
 
             const cupos = Number(config.vacantes) - (ocupacion[label] || 0);
@@ -194,13 +218,10 @@ async function generateSlots(dateStr) {
             }
             grid.appendChild(btn);
         }
-    } catch (error) {
-        console.error(error);
-        grid.innerHTML = "<p>Error al cargar horarios.</p>";
-    }
+    } catch (error) { console.error(error); }
 }
 
-// Navegación
+// Navegación Calendario
 document.getElementById('prev-month').onclick = () => {
     currentDate.setMonth(currentDate.getMonth() - 1);
     renderCalendar();

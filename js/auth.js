@@ -19,22 +19,16 @@ if (loginForm) {
         const passInput = loginForm.querySelector('input[type="password"]');
         const submitBtn = loginForm.querySelector('button[type="submit"]');
 
-        const emailValue = emailInput.value.trim();
-        const passValue = passInput.value;
-
         // UI: Estado de carga
         const originalText = submitBtn.innerText;
         submitBtn.innerText = "Verificando...";
         submitBtn.disabled = true;
 
-try {
-            // Limpieza profunda de valores
-            const emailFinal = emailValue.toLowerCase().trim();
-            const passFinal = passValue.trim(); 
+        try {
+            const emailFinal = emailInput.value.toLowerCase().trim();
+            const passFinal = passInput.value.trim(); 
 
             await setPersistence(auth, browserLocalPersistence);
-            
-            console.log("Intentando ingresar con:", emailFinal); // Para que verifiques en consola
             
             const userCredential = await signInWithEmailAndPassword(auth, emailFinal, passFinal);
             const user = userCredential.user;
@@ -43,9 +37,17 @@ try {
             const userDocSnap = await getDoc(doc(db, "alumnos", user.uid));
 
             if (userDocSnap.exists()) {
-                window.location.href = "reserva.html";
+                // INTEGRACIÓN DE PARÁMETROS URL
+                const urlParams = new URLSearchParams(window.location.search);
+                const claseIntentada = urlParams.get('clase');
+
+                if (claseIntentada) {
+                    window.location.href = `reserva.html?clase=${claseIntentada}`;
+                } else {
+                    window.location.href = "reserva.html";
+                }
             } else {
-                alert("Usuario autenticado pero no encontrado en la colección 'alumnos'. Revisa el UID.");
+                alert("Usuario autenticado pero no encontrado en la colección 'alumnos'.");
                 await auth.signOut();
                 submitBtn.innerText = originalText;
                 submitBtn.disabled = false;
@@ -54,19 +56,12 @@ try {
         } catch (error) {
             submitBtn.innerText = originalText;
             submitBtn.disabled = false;
-
             console.error("Error de login:", error.code);
 
             let message = "Error al ingresar. Verifique sus datos.";
-            
             if (error.code === 'auth/invalid-credential') {
                 message = "Email o contraseña incorrectos.";
-            } else if (error.code === 'auth/user-not-found') {
-                message = "El usuario no existe.";
-            } else if (error.code === 'auth/wrong-password') {
-                message = "Contraseña incorrecta.";
             }
-
             alert(message);
         }
     });
