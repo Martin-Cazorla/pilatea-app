@@ -70,17 +70,17 @@
                 <h3><i class="fa-solid fa-user-plus"></i> Nuevo Alumno</h3>
                 <button class="close-modal" onclick="closeModal('modal-student')">&times;</button>
             </div>
-            <form id="form-add-student" class="modal-body">
-                <div class="input-group">
-                    <label>Nombre Completo</label>
-                    <input type="text" placeholder="Ej: Juan Perez" required>
-                </div>
-                <div class="input-group">
-                    <label>Email</label>
-                    <input type="email" placeholder="juan@mail.com" required>
-                </div>
-                <button type="submit" class="btn-action">Guardar Alumno</button>
-            </form>
+                <form id="form-add-student" class="modal-body">
+                    <div class="input-group">
+                        <label for="new-student-name">Nombre Completo</label>
+                        <input type="text" id="new-student-name" placeholder="Ej: Juan Perez" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="new-student-email">Email</label>
+                        <input type="email" id="new-student-email" placeholder="juan@mail.com" required>
+                    </div>
+                    <button type="submit" class="btn-action">Guardar Alumno</button>
+                </form>
         </div>
     </div>
 
