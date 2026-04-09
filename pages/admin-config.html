@@ -24,7 +24,6 @@
 
         <section class="config-section">
             <h3><i class="fa-solid fa-users"></i> Gestión de Alumnos</h3>
-    
             <div class="actions-grid-admin">
                 <div class="search-container">
                     <i class="fa-solid fa-magnifying-glass"></i>
@@ -35,52 +34,63 @@
                     <button class="btn-action-small" onclick="openModal('add-credits')">Cargar Créditos</button>
                 </div>
             </div>
-
             <div class="table-scroll-container">
-                <div class="table-responsive">
-                    <table class="admin-table">
-                        <thead>
-                            <tr>
-                                <th>Nombre</th>
-                                <th>Email</th>
-                                <th>Créditos</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody id="student-list">
-                            </tbody>
-                    </table>
-                </div>
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Email</th>
+                            <th>Créditos</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="student-list"></tbody>
+                </table>
             </div>
         </section>
 
         <section class="config-section">
             <h3><i class="fa-solid fa-gear"></i> Configuración de Clases</h3>
-            <div id="disciplinas-container" class="classes-grid">
-                </div>
-            <div class="save-all-container" style="margin-top: 20px; text-align: center;">
-                <button id="btn-save-config" class="btn-action btn-save">Guardar Toda la Configuración</button>
+            <div id="disciplinas-container" class="classes-grid"></div>
+        </section>
+
+        <section class="config-section">
+            <h3><i class="fa-solid fa-calendar-check"></i> Días de Apertura</h3>
+            <p style="font-size: 0.9rem; color: #666; margin-bottom: 10px;">Selecciona los días que el estudio ofrece clases habitualmente:</p>
+            <div class="dias-semana-grid" style="display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 20px; background: #f9f9f9; padding: 15px; border-radius: 8px;">
+                <label><input type="checkbox" class="check-dia" value="1"> Lun</label>
+                <label><input type="checkbox" class="check-dia" value="2"> Mar</label>
+                <label><input type="checkbox" class="check-dia" value="3"> Mié</label>
+                <label><input type="checkbox" class="check-dia" value="4"> Jue</label>
+                <label><input type="checkbox" class="check-dia" value="5"> Vie</label>
+                <label><input type="checkbox" class="check-dia" value="6"> Sáb</label>
+                <label><input type="checkbox" class="check-dia" value="0"> Dom</label>
+            </div>
+
+            <h3><i class="fa-solid fa-calendar-xmark"></i> Días Cerrados Específicos</h3>
+            <div class="input-group">
+                <label for="dias-cerrado">Feriados o fechas puntuales (Separar por coma):</label>
+                <input type="text" id="dias-cerrado" placeholder="Ej: 2026-05-25, 2026-06-20" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+                <small style="display:block; margin-top:5px; color:#888;">Formato: AAAA-MM-DD</small>
             </div>
         </section>
+
+        <div class="save-all-container" style="margin: 30px 0; text-align: center;">
+            <button id="btn-save-config" class="btn-action btn-save" style="padding: 15px 30px; font-size: 1.1rem;">Guardar Toda la Configuración</button>
+        </div>
     </main>
 
     <div id="modal-student" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-header">
-                <h3><i class="fa-solid fa-user-plus"></i> Nuevo Alumno</h3>
-                <button class="close-modal" onclick="closeModal('modal-student')">&times;</button>
+                <h3>Nuevo Alumno</h3>
+                <button onclick="closeModal('modal-student')">&times;</button>
             </div>
-                <form id="form-add-student" class="modal-body">
-                    <div class="input-group">
-                        <label for="new-student-name">Nombre Completo</label>
-                        <input type="text" id="new-student-name" placeholder="Ej: Juan Perez" required>
-                    </div>
-                    <div class="input-group">
-                        <label for="new-student-email">Email</label>
-                        <input type="email" id="new-student-email" placeholder="juan@mail.com" required>
-                    </div>
-                    <button type="submit" class="btn-action">Guardar Alumno</button>
-                </form>
+            <form id="form-add-student" class="modal-body">
+                <input type="text" id="new-student-name" placeholder="Nombre Completo" required>
+                <input type="email" id="new-student-email" placeholder="Email" required>
+                <button type="submit" class="btn-action">Registrar Alumno</button>
+            </form>
         </div>
     </div>
 
@@ -88,57 +98,18 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h3>Cargar Créditos</h3>
-                <button class="close-modal" onclick="closeModal('modal-credits')">&times;</button>
+                <button onclick="closeModal('modal-credits')">&times;</button>
             </div>
             <form id="form-add-credits" class="modal-body">
-                <div class="search-select-container">
-                    <label>Buscar alumno:</label>
-                    <input type="text" id="search-student-modal" placeholder="Escribe para filtrar...">
-                    <select id="select-student-credits" required>
-                        <option value="">Seleccione un alumno...</option>
-                    </select>
-                </div>
-                <div class="input-group">
-                    <label>Cantidad de créditos:</label>
-                    <input type="number" id="input-credits-amount" min="1" value="4" required>
-                </div>
+                <input type="text" id="search-student-modal" placeholder="Filtrar alumno...">
+                <select id="select-student-credits" required></select>
+                <input type="number" id="input-credits-amount" value="4" min="1">
                 <button type="submit" class="btn-primary">Confirmar Carga</button>
             </form>
         </div>
     </div>
 
-    <footer>
-        <div class="footer-content">
-            <div class="footer-info">
-                <p><strong>Estudio Pilatea</strong> | Miguel Soler 311 | Contacto: +54 9 11 25922054</p>
-            </div>
-        
-            <div class="social-links">
-                <a href="https://instagram.com/tucuenta" target="_blank" class="social-icon">
-                    <i class="fa-brands fa-instagram"></i>
-                </a>
-                <a href="https://wa.me/5491125922054" target="_blank" class="social-icon">
-                    <i class="fa-brands fa-whatsapp"></i>
-                </a>
-            </div>
-        </div>
-
-        <div class="copyright">
-            &copy; 2026 Cazorla Estudio - Todos los derechos reservados.
-        </div>
-    </footer>
-
     <script src="../js/modals.js"></script>
-        <script type="importmap">
-            {
-                "imports": {
-                  "firebase/app": "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js",
-                  "firebase/firestore": "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js",
-                  "firebase/auth": "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js"
-                }
-            }
-        </script>
     <script type="module" src="../js/admin-firebase.js"></script>
-
 </body>
 </html>

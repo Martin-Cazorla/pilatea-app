@@ -72,9 +72,10 @@ function renderCalendar() {
 
 // --- LÓGICA DE FIREBASE ---
 
-onAuthStateChanged(auth, (user) => {
+onAuthStateChanged(auth, async (user) => {
     if (user) {
         currentUser = user;
+        
         onSnapshot(doc(db, "alumnos", user.uid), (docSnap) => {
             if (docSnap.exists()) {
                 const data = docSnap.data();
@@ -83,19 +84,19 @@ onAuthStateChanged(auth, (user) => {
             }
         });
 
-        // 1. DETECTAR CLASE DESDE URL
         const urlParams = new URLSearchParams(window.location.search);
-        const claseDesdeURL = urlParams.get('clase');
-
-        // 2. AJUSTAR SELECTOR SI VIENE DESDE HOME
-        if (claseDesdeURL && classSelect) {
-            classSelect.value = claseDesdeURL;
+        const claseURL = urlParams.get('clase');
+        if (claseURL && classSelect) {
+            classSelect.value = claseURL;
         }
 
         fetchUserReservations();
         renderCalendar();
         updateDateDisplay();
-        generateSlots(selectedDate.toISOString().split('T')[0]);
+        
+        const todayStr = selectedDate.toISOString().split('T')[0];
+        generateSlots(todayStr);
+
     } else {
         window.location.href = "login.html";
     }
@@ -132,7 +133,6 @@ async function fetchUserReservations() {
 
 async function handleReservation(time, dateStr) {
     if (userCredits <= 0) return alert("No tenés créditos disponibles.");
-    
     const selectedClassName = classSelect.options[classSelect.selectedIndex].text;
     const selectedClassId = classSelect.value;
 
@@ -144,9 +144,9 @@ async function handleReservation(time, dateStr) {
             where("disciplinaId", "==", selectedClassId));
             
         const snap = await getDocs(qDuplicado);
-        if (!snap.empty) return alert(`Ya tenés una reserva para ${selectedClassName} en este horario.`);
+        if (!snap.empty) return alert(`Ya tenés una reserva para esta clase.`);
 
-        if (!confirm(`¿Confirmar reserva para ${selectedClassName} el ${dateStr} a las ${time}hs?`)) return;
+        if (!confirm(`¿Confirmar reserva para ${selectedClassName}?`)) return;
 
         await updateDoc(doc(db, "alumnos", currentUser.uid), { creditos: increment(-1) });
         await addDoc(collection(db, "reservas"), {
@@ -164,69 +164,93 @@ async function handleReservation(time, dateStr) {
 }
 
 async function handleCancel(reservationId) {
-    if (!confirm("¿Querés cancelar esta clase? Se te devolverá el crédito.")) return;
+    if (!confirm("¿Querés cancelar esta clase?")) return;
     try {
         await deleteDoc(doc(db, "reservas", reservationId));
         await updateDoc(doc(db, "alumnos", currentUser.uid), { creditos: increment(1) });
-        alert("Clase cancelada.");
         generateSlots(selectedDate.toISOString().split('T')[0]);
     } catch (e) { alert("Error al cancelar."); }
 }
 
 async function generateSlots(dateStr) {
+    if (!grid) return;
     grid.innerHTML = "<p>Cargando horarios...</p>";
-    const selectedClassId = classSelect.value;
-    
+
     try {
-        const configSnap = await getDoc(doc(db, "configuracion", "clases"));
-        if (!configSnap.exists()) {
-            grid.innerHTML = "<p>Configuración no encontrada.</p>";
-            return;
+        // 1. CONSULTA DE CONTROL TOTAL (Calendario y Días Laborales)
+        const calSnap = await getDoc(doc(db, "configuracion", "calendario"));
+        if (calSnap.exists()) {
+            const data = calSnap.data();
+            const fechaSeleccionada = new Date(dateStr + "T00:00:00");
+            const diaSemana = fechaSeleccionada.getDay(); // 0-6
+            const feriados = (data.deshabilitados || "").split(',').map(d => d.trim());
+
+            // Verificamos si el día de la semana está habilitado (Control Total)
+            if (data.diasLaborales && !data.diasLaborales.includes(diaSemana)) {
+                grid.innerHTML = `
+                    <div class="closed-msg" style="text-align:center; padding:20px;">
+                        <i class="fa-solid fa-calendar-minus" style="font-size:2rem; color:#888;"></i>
+                        <p>El estudio no abre este día de la semana.</p>
+                    </div>`;
+                return;
+            }
+
+            // Verificamos si es un feriado específico
+            if (feriados.includes(dateStr)) {
+                grid.innerHTML = `
+                    <div class="closed-msg" style="text-align:center; padding:20px;">
+                        <i class="fa-solid fa-mug-hot" style="font-size:2rem; color:#5d4037;"></i>
+                        <p>Cerrado por feriado o mantenimiento.</p>
+                    </div>`;
+                return;
+            }
         }
 
-        const configAll = configSnap.data();
-        const config = configAll[selectedClassId] || { inicio: "08:00", fin: "21:00", vacantes: 5, bloqueados: "" };
-        
+        // 2. OBTENER CONFIGURACIÓN DE DISCIPLINAS
+        const selectedClassId = classSelect ? classSelect.value : 'reformer';
+        const configSnap = await getDoc(doc(db, "configuracion", "clases"));
+        const configAll = configSnap.exists() ? configSnap.data() : {};
+        const config = configAll[selectedClassId] || { inicio: "08:00", fin: "20:00", vacantes: 5 };
+
+        // 3. CONSULTA DE OCUPACIÓN
         const q = query(collection(db, "reservas"), 
                         where("fecha", "==", dateStr),
                         where("disciplinaId", "==", selectedClassId));
-
         const snap = await getDocs(q);
         const ocupacion = {};
-        snap.forEach(d => ocupacion[d.data().hora] = (ocupacion[d.data().hora] || 0) + 1);
+        snap.forEach(d => {
+            ocupacion[d.data().hora] = (ocupacion[d.data().hora] || 0) + 1;
+        });
 
+        // 4. RENDERIZADO DE SLOTS
         grid.innerHTML = '';
-        const hInicio = parseInt(config.inicio.split(':')[0]);
-        const hFin = parseInt(config.fin.split(':')[0]);
-        const horasBloqueadas = config.bloqueados ? config.bloqueados.split(',').map(h => h.trim()) : [];
+        const hInicio = parseInt(config.inicio.split(':')[0]) || 8;
+        const hFin = parseInt(config.fin.split(':')[0]) || 20;
+        const bloqueados = (config.bloqueados || "").split(',').map(h => h.trim());
 
         for (let h = hInicio; h <= hFin; h++) {
             const label = `${h.toString().padStart(2, '0')}:00`;
-            if (horasBloqueadas.includes(label)) continue;
+            if (bloqueados.includes(label)) continue;
 
             const cupos = Number(config.vacantes) - (ocupacion[label] || 0);
             const btn = document.createElement('button');
             btn.className = 'btn-slot';
 
             if (cupos <= 0) {
-                btn.classList.add('btn-full'); 
-                btn.disabled = true;
-                btn.innerHTML = `<span>${label}hs</span><small>COMPLETO</small>`;
+                btn.classList.add('btn-full'); btn.disabled = true;
+                btn.innerHTML = `<span>${label}hs</span><small>LLENO</small>`;
             } else {
                 btn.innerHTML = `<span>${label}hs</span><small>Cupos: ${cupos}</small>`;
                 btn.onclick = () => handleReservation(label, dateStr);
             }
             grid.appendChild(btn);
         }
-    } catch (error) { console.error(error); }
+    } catch (error) {
+        console.error("Error:", error);
+        grid.innerHTML = "<p>Error al cargar horarios.</p>";
+    }
 }
 
 // Navegación Calendario
-document.getElementById('prev-month').onclick = () => {
-    currentDate.setMonth(currentDate.getMonth() - 1);
-    renderCalendar();
-};
-document.getElementById('next-month').onclick = () => {
-    currentDate.setMonth(currentDate.getMonth() + 1);
-    renderCalendar();
-};
+document.getElementById('prev-month').onclick = () => { currentDate.setMonth(currentDate.getMonth() - 1); renderCalendar(); };
+document.getElementById('next-month').onclick = () => { currentDate.setMonth(currentDate.getMonth() + 1); renderCalendar(); };
