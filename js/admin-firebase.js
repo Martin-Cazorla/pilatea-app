@@ -6,6 +6,7 @@ import {
     createUserWithEmailAndPassword, signOut
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import { requireAdmin } from './utils/guards.js';
+import { recalcularTurnos } from './utils/turnos.js';
 
 // SEGURIDAD: nada de lo que sigue corre hasta confirmar que el usuario es admin.
 await requireAdmin();
@@ -139,3 +140,23 @@ document.getElementById('btn-save-config').addEventListener('click', async () =>
     } catch (e) { alert("Error"); }
     finally { btn.disabled = false; btn.innerText = "Guardar Toda la Configuración"; }
 });
+
+// Mantenimiento: migra reservas viejas y recalcula los contadores de cupo.
+const btnRecalcular = document.getElementById('btn-recalcular-cupos');
+if (btnRecalcular) {
+    btnRecalcular.addEventListener('click', async () => {
+        if (!confirm("¿Recalcular los cupos de todas las clases a partir de las reservas?")) return;
+        btnRecalcular.disabled = true;
+        try {
+            const r = await recalcularTurnos(db);
+            alert(`Listo: ${r.reservas} reservas en ${r.turnos} clases. ` +
+                  `Migradas: ${r.migradas}. Duplicadas eliminadas (crédito devuelto): ${r.duplicadas}. ` +
+                  `Ignoradas por datos incompletos: ${r.invalidas}.`);
+        } catch (e) {
+            console.error(e);
+            alert("No se pudo recalcular los cupos.");
+        } finally {
+            btnRecalcular.disabled = false;
+        }
+    });
+}
