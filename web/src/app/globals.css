@@ -1,0 +1,44 @@
+@import "tailwindcss";
+
+/* Paleta y tipografía de PILATEA (vienen de scss/base/_variables.scss). */
+@theme {
+  --color-principal: #5d4037;   /* marrón chocolate */
+  --color-acento: #3e2723;      /* marrón oscuro */
+  --color-texto: #212121;
+  --color-crema: #f1efe7;       /* nav y tarjetas */
+  --color-reserva: #a8daad;     /* verde agua */
+  --color-error: #ff5252;
+  --color-exito: #25d366;
+  --color-peligro: #c62828;
+  --color-footer: #2c3e50;
+  --color-suave: #6d5a52;
+
+  --font-sans: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-titulo: var(--font-montserrat), "Montserrat", sans-serif;
+}
+
+body {
+  color: var(--color-texto);
+  background-color: var(--color-crema);
+}
+
+/* Botones compartidos (equivalen a scss/components/_buttons.scss).
+   Son @utility para poder sumarles clases de Tailwind encima (px-4, w-full...). */
+@utility btn {
+  @apply inline-flex items-center justify-center gap-2 rounded-lg px-6 py-3 font-titulo text-sm font-bold transition-all duration-300 cursor-pointer
+    focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-principal/35
+    disabled:cursor-not-allowed disabled:opacity-60;
+}
+@utility btn-primary {
+  @apply btn bg-principal uppercase text-white hover:-translate-y-0.5 hover:bg-acento hover:shadow-lg active:translate-y-0
+    disabled:translate-y-0 disabled:shadow-none;
+}
+@utility btn-outline {
+  @apply btn border-[1.5px] border-principal bg-transparent text-principal hover:bg-principal hover:text-white;
+}
+@utility btn-ghost {
+  @apply btn border-[1.5px] border-transparent bg-transparent text-suave hover:bg-crema hover:text-acento;
+}
+@utility btn-danger {
+  @apply btn bg-peligro uppercase text-white hover:-translate-y-0.5 hover:bg-[#a51f1f] hover:shadow-lg;
+}
