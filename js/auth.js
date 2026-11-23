@@ -41,7 +41,9 @@ if (loginForm) {
                 const urlParams = new URLSearchParams(window.location.search);
                 const claseIntentada = urlParams.get('clase');
 
-                if (claseIntentada) {
+                if (userDocSnap.data().role === 'admin' && !claseIntentada) {
+                    window.location.href = "admin.html";
+                } else if (claseIntentada) {
                     window.location.href = `reserva.html?clase=${claseIntentada}`;
                 } else {
                     window.location.href = "reserva.html";

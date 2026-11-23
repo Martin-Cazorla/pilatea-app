@@ -3,6 +3,10 @@ import {
     collection, onSnapshot, query, where, 
     doc, getDoc, deleteDoc, updateDoc, increment 
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { requireAdmin } from './utils/guards.js';
+
+// SEGURIDAD: nada de lo que sigue corre hasta confirmar que el usuario es admin.
+await requireAdmin();
 
 // Referencias DOM
 const dateFilter = document.getElementById('filter-date');

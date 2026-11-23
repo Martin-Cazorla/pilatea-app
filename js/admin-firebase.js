@@ -3,13 +3,12 @@ import {
     collection, onSnapshot, doc, deleteDoc, updateDoc, increment, setDoc, getDoc 
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 import { 
-    createUserWithEmailAndPassword, signOut, onAuthStateChanged 
+    createUserWithEmailAndPassword, signOut
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { requireAdmin } from './utils/guards.js';
 
-// SEGURIDAD
-onAuthStateChanged(auth, (user) => {
-    if (!user) window.location.href = "login.html";
-});
+// SEGURIDAD: nada de lo que sigue corre hasta confirmar que el usuario es admin.
+await requireAdmin();
 
 // Referencias DOM
 const studentForm = document.getElementById('form-add-student');
