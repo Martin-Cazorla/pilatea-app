@@ -560,12 +560,29 @@ footer .copyright {
   border-right: 1px solid #eee;
   padding-right: 20px;
 }
+.time-column #selected-date-display {
+  margin-bottom: 12px;
+}
 .time-column .time-slots-vertical {
   display: flex;
   flex-direction: column;
   gap: 12px;
+  max-height: 460px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 4px 8px 4px 4px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(93, 64, 55, 0.4) transparent;
+}
+.time-column .time-slots-vertical::-webkit-scrollbar {
+  width: 6px;
+}
+.time-column .time-slots-vertical::-webkit-scrollbar-thumb {
+  background: rgba(93, 64, 55, 0.4);
+  border-radius: 3px;
 }
 .time-column .time-slots-vertical .btn-slot {
+  flex-shrink: 0;
   background: #fff;
   border: 1px solid #5d4037;
   color: #5d4037;
@@ -574,14 +591,26 @@ footer .copyright {
   cursor: pointer;
   display: flex;
   justify-content: space-between;
+  font-family: inherit;
 }
-.time-column .time-slots-vertical .btn-slot:hover:not(:disabled) {
-  background: rgba(93, 64, 55, 0.05);
+.time-column .time-slots-vertical .btn-slot:hover:not(:disabled), .time-column .time-slots-vertical .btn-slot:focus-visible:not(:disabled) {
+  background: #5d4037;
+}
+.time-column .time-slots-vertical .btn-slot:hover:not(:disabled) span, .time-column .time-slots-vertical .btn-slot:hover:not(:disabled) small, .time-column .time-slots-vertical .btn-slot:focus-visible:not(:disabled) span, .time-column .time-slots-vertical .btn-slot:focus-visible:not(:disabled) small {
+  color: #ffffff;
+}
+.time-column .time-slots-vertical .btn-slot:focus-visible {
+  outline: 3px solid rgba(93, 64, 55, 0.35);
+  outline-offset: 2px;
 }
 .time-column .time-slots-vertical .btn-slot.btn-full {
+  background: #f2f2f2;
   border-color: #ddd;
   color: #999;
   cursor: not-allowed;
+}
+.time-column .time-slots-vertical .btn-slot.btn-full span {
+  color: #999;
 }
 
 .user-reservations {
@@ -637,6 +666,22 @@ footer .copyright {
   .calendar-column, .time-column {
     border-right: none;
     padding-right: 0;
+  }
+}
+@media (max-width: 600px) {
+  .reservation-container {
+    padding: 30px 12px;
+  }
+  .booking-wrapper {
+    padding: 20px 16px;
+    gap: 24px;
+  }
+  .calendar-column, .time-column, .user-reservations {
+    min-width: 0;
+    flex-basis: 100%;
+  }
+  .time-column .time-slots-vertical {
+    max-height: 55vh;
   }
 }
 .admin-container {
@@ -998,4 +1043,6 @@ footer .copyright {
   .admin-config-container {
     padding: 15px 2%;
   }
-}/*# sourceMappingURL=main.css.map */
+}
+
+/*# sourceMappingURL=main.css.map */

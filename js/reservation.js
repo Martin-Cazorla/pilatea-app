@@ -197,6 +197,7 @@ async function handleCancel(reserva) {
 async function generateSlots(dateStr) {
     if (!grid) return;
     grid.innerHTML = "<p>Cargando horarios...</p>";
+    grid.scrollTop = 0;
 
     try {
         // 1. CONSULTA DE CONTROL TOTAL (Calendario y Días Laborales)
