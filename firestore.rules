@@ -147,13 +147,9 @@ service cloud.firestore {
     match /alumnos/{uid} {
       allow read: if isAdmin() || isSelf(uid);
 
-      // El alta de alumno crea el doc logueado como el alumno nuevo
-      // (createUserWithEmailAndPassword), así que se permite crear el propio
-      // doc solo con rol 'alumno' y 0 créditos.
-      allow create: if isAdmin()
-        || (isSelf(uid)
-            && request.resource.data.role == 'alumno'
-            && request.resource.data.creditos == 0);
+      // El alta la hace el admin con su propia sesión (el usuario de Auth se
+      // crea en una app secundaria, ver js/utils/alumnos.js).
+      allow create: if isAdmin();
 
       allow update: if isAdmin()
         || (isSelf(uid) && (isBookingDebit(uid) || isCancelRefund(uid)));

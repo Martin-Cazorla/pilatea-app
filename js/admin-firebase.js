@@ -1,10 +1,8 @@
-import { db, auth } from './config/firebase.js';
+import { db } from './config/firebase.js';
 import { 
     collection, onSnapshot, doc, deleteDoc, updateDoc, increment, setDoc, getDoc 
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-import { 
-    createUserWithEmailAndPassword, signOut
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { crearAlumno, enviarAcceso, mensajeErrorAlta } from './utils/alumnos.js';
 import { requireAdmin } from './utils/guards.js';
 import { recalcularTurnos } from './utils/turnos.js';
 
@@ -29,8 +27,14 @@ onSnapshot(collection(db, "alumnos"), (snapshot) => {
         const id = docSnap.id;
         if (studentTableBody) {
             const row = document.createElement('tr');
-            row.innerHTML = `<td>${alumno.nombre}</td><td>${alumno.email}</td><td><span class="credits-badge">${alumno.creditos || 0}</span></td>
-                <td><button class="btn-delete" data-id="${id}"><i class="fa-solid fa-trash"></i></button></td>`;
+            row.innerHTML = `<td></td><td></td><td><span class="credits-badge"></span></td>
+                <td><button class="btn-reset-pass" title="Reenviar mail de acceso"><i class="fa-solid fa-key"></i></button>
+                <button class="btn-delete" data-id="${id}"><i class="fa-solid fa-trash"></i></button></td>`;
+            // textContent: nombre y email los carga el admin, no se interpretan como HTML.
+            row.cells[0].textContent = alumno.nombre || '';
+            row.cells[1].textContent = alumno.email || '';
+            row.querySelector('.credits-badge').textContent = alumno.creditos || 0;
+            row.querySelector('.btn-reset-pass').dataset.email = alumno.email || '';
             studentTableBody.appendChild(row);
         }
         if (studentSelect) {
@@ -42,20 +46,52 @@ onSnapshot(collection(db, "alumnos"), (snapshot) => {
 });
 
 // Registro Nuevo Alumno
+// El alta corre en una app de Firebase aparte (ver utils/alumnos.js), así que
+// el admin sigue logueado. El alumno recibe un mail para elegir su contraseña.
 if (studentForm) {
     studentForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const nombre = document.getElementById('new-student-name').value;
         const email = document.getElementById('new-student-email').value;
+        const btn = studentForm.querySelector('button[type="submit"]');
+        const textoOriginal = btn.innerText;
+        btn.disabled = true;
+        btn.innerText = "Registrando...";
         try {
-            const userCred = await createUserWithEmailAndPassword(auth, email, "Pilatea2026");
-            await setDoc(doc(db, "alumnos", userCred.user.uid), {
-                nombre, email, creditos: 0, role: 'alumno', uid: userCred.user.uid, fechaAlta: new Date()
-            });
-            alert("Alumno creado. Se cerrará sesión por seguridad.");
-            await signOut(auth);
-            window.location.href = "login.html";
-        } catch (err) { alert(err.message); }
+            const { mailEnviado } = await crearAlumno(db, { nombre, email });
+            studentForm.reset();
+            closeModal('modal-student');
+            alert(mailEnviado
+                ? `Alumno creado. Le enviamos a ${email.trim()} un mail para que elija su contraseña.`
+                : "Alumno creado, pero no se pudo enviar el mail de acceso. Reenvialo con el botón de la llave en la tabla.");
+        } catch (err) {
+            console.error(err);
+            alert(mensajeErrorAlta(err));
+        } finally {
+            btn.disabled = false;
+            btn.innerText = textoOriginal;
+        }
+    });
+}
+
+// Reenviar mail de acceso (el link del mail vence, o el alumno lo perdió)
+if (studentTableBody) {
+    studentTableBody.addEventListener('click', async (e) => {
+        const btn = e.target.closest('.btn-reset-pass');
+        if (!btn) return;
+        const email = btn.dataset.email;
+        if (!email) return alert("Este alumno no tiene email cargado.");
+        if (!confirm(`¿Enviar a ${email} un mail para elegir una contraseña nueva?`)) return;
+        btn.disabled = true;
+        try {
+            await enviarAcceso(email);
+            alert("Mail enviado.");
+        } catch (err) {
+            console.error(err);
+            alert(mensajeErrorAlta(err));
+        } finally {
+            btn.disabled = false;
+        }
     });
 }
 

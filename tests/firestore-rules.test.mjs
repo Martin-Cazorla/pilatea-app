@@ -202,7 +202,7 @@ await env.withSecurityRulesDisabled(async (ctx) => updateDoc(doc(ctx.firestore()
 await t('alumno sin créditos NO reserva', () => assertFails(book(ana(), 'ana', { hora: '13:00' })));
 
 // ---------- Alta de alumno ----------
-await t('alta: crea su doc como alumno con 0', () => assertSucceeds(setDoc(doc(as('nuevo'), 'alumnos/nuevo'), { nombre: 'N', email: 'n@x', creditos: 0, role: 'alumno', uid: 'nuevo', fechaAlta: new Date() })));
+await t('alta: NO crea su propio doc (solo admin)', () => assertFails(setDoc(doc(as('nuevo'), 'alumnos/nuevo'), { nombre: 'N', email: 'n@x', creditos: 0, role: 'alumno', uid: 'nuevo', fechaAlta: new Date() })));
 await t('alta: NO se crea como admin', () => assertFails(setDoc(doc(as('n2'), 'alumnos/n2'), { creditos: 0, role: 'admin' })));
 await t('alta: NO se crea con créditos', () => assertFails(setDoc(doc(as('n3'), 'alumnos/n3'), { creditos: 10, role: 'alumno' })));
 
@@ -214,6 +214,7 @@ await t('anónimo NO lee config', () => assertFails(getDoc(doc(anon(), 'configur
 // ---------- Admin ----------
 await seed();
 await t('admin lista alumnos', () => assertSucceeds(getDocs(collection(admin(), 'alumnos'))));
+await t('admin da de alta un alumno', () => assertSucceeds(setDoc(doc(admin(), 'alumnos/nuevo'), { nombre: 'N', email: 'n@x', creditos: 0, role: 'alumno', uid: 'nuevo', fechaAlta: new Date() })));
 await t('admin lista reservas del día', () => assertSucceeds(getDocs(query(collection(admin(), 'reservas'), where('fecha', '==', FUTURA)))));
 await t('admin carga créditos', () => assertSucceeds(updateDoc(doc(admin(), 'alumnos/beto'), { creditos: increment(5) })));
 await t('admin guarda config', () => assertSucceeds(setDoc(doc(admin(), 'configuracion/calendario'), { diasLaborales: [1, 2], deshabilitados: '' })));
