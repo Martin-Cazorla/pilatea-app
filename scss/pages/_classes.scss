@@ -61,16 +61,43 @@
     border-right: 1px solid #eee;
     padding-right: 20px;
 
+    #selected-date-display { margin-bottom: 12px; }
+
+    // La lista de horarios scrollea dentro de su propia caja, así la fecha
+    // elegida y el selector de clase quedan siempre a la vista.
     .time-slots-vertical {
         display: flex;
         flex-direction: column;
         gap: 12px;
+        max-height: 460px;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        padding: 4px 8px 4px 4px; // aire para el borde y el foco
+        scrollbar-width: thin;
+        scrollbar-color: rgba($color-principal, 0.4) transparent;
+
+        &::-webkit-scrollbar { width: 6px; }
+        &::-webkit-scrollbar-thumb { background: rgba($color-principal, 0.4); border-radius: 3px; }
+
         .btn-slot {
+            flex-shrink: 0;
             background: #fff; border: 1px solid $color-principal; color: $color-principal;
             padding: 15px; border-radius: 8px; cursor: pointer;
             display: flex; justify-content: space-between;
-            &:hover:not(:disabled) { background: rgba($color-principal, 0.05); }
-            &.btn-full { border-color: #ddd; color: #999; cursor: not-allowed; }
+            font-family: inherit;
+
+            // Hover/foco: fondo marrón con texto blanco (antes quedaba blanco sobre blanco).
+            &:hover:not(:disabled),
+            &:focus-visible:not(:disabled) {
+                background: $color-principal;
+                span, small { color: $color-blanco; }
+            }
+            &:focus-visible { outline: 3px solid rgba($color-principal, 0.35); outline-offset: 2px; }
+
+            &.btn-full {
+                background: #f2f2f2; border-color: #ddd; color: #999; cursor: not-allowed;
+                span { color: #999; }
+            }
         }
     }
 }
@@ -119,4 +146,11 @@
 
 @media (max-width: 1024px) {
     .calendar-column, .time-column { border-right: none; padding-right: 0; }
+}
+
+@media (max-width: 600px) {
+    .reservation-container { padding: 30px 12px; }
+    .booking-wrapper { padding: 20px 16px; gap: 24px; }
+    .calendar-column, .time-column, .user-reservations { min-width: 0; flex-basis: 100%; }
+    .time-column .time-slots-vertical { max-height: 55vh; }
 }
