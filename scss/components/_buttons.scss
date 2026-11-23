@@ -71,3 +71,104 @@
         small { color: $color-error; }
     }
 }
+// --- Variantes usadas en el panel de staff y los modales ---
+.btn-lg { padding: 15px 32px; font-size: 0.95rem; }
+
+.btn-outline,
+.btn-ghost,
+.btn-danger {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 22px;
+    border-radius: 8px;
+    font-family: $fuente-secundaria;
+    font-weight: 700;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.btn-outline {
+    background: transparent;
+    color: $color-principal;
+    border: 1.5px solid $color-principal;
+    &:hover:not(:disabled) { background: $color-principal; color: $color-blanco; }
+}
+
+.btn-ghost {
+    background: transparent;
+    color: #6d5a52;
+    border: 1.5px solid transparent;
+    &:hover:not(:disabled) { background: $color-crema; color: $color-acento; }
+}
+
+.btn-danger {
+    background: #c62828;
+    color: $color-blanco;
+    border: none;
+    text-transform: uppercase;
+    &:hover:not(:disabled) { background: #a51f1f; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(198, 40, 40, 0.25); }
+}
+
+.btn-primary, .btn-outline, .btn-ghost, .btn-danger {
+    i { margin-right: 2px; }
+    &:disabled { opacity: 0.6; cursor: not-allowed; transform: none; box-shadow: none; }
+    &:focus-visible { outline: 3px solid rgba($color-principal, 0.35); outline-offset: 2px; }
+}
+
+// Botón redondo solo con ícono (acciones de tabla)
+.btn-icon {
+    width: 36px;
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    border: 1px solid rgba($color-principal, 0.25);
+    background: $color-blanco;
+    color: $color-principal;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    & + & { margin-left: 6px; }
+    &:hover:not(:disabled) { background: $color-principal; color: $color-blanco; border-color: $color-principal; }
+    &:disabled { opacity: 0.5; cursor: not-allowed; }
+}
+
+// Chips (filtros, cantidades rápidas)
+.chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border-radius: 50px;
+    border: 1.5px solid rgba($color-principal, 0.3);
+    background: $color-blanco;
+    color: $color-principal;
+    font-family: $fuente-secundaria;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+
+    .chip-count {
+        min-width: 22px;
+        padding: 1px 7px;
+        border-radius: 50px;
+        background: rgba($color-principal, 0.1);
+        font-size: 0.72rem;
+        text-align: center;
+        &:empty { display: none; }
+    }
+
+    &:hover { border-color: $color-principal; }
+    &.active {
+        background: $color-principal;
+        border-color: $color-principal;
+        color: $color-blanco;
+        .chip-count { background: rgba(255, 255, 255, 0.2); }
+    }
+    &:focus-visible { outline: 3px solid rgba($color-principal, 0.35); outline-offset: 2px; }
+}

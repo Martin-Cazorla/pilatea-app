@@ -1,24 +1,9 @@
-.admin-config-container {
-    padding: 20px 4%;
-    width: 100%;
-    max-width: 1200px;
-    margin: 0 auto;
-    overflow-x: hidden;
-
-    h2 {
-        color: $color-acento;
-        margin-bottom: 30px;
-        font-family: $fuente-secundaria;
-        text-align: center;
-    }
-}
-
 .config-section {
     background: white;
     padding: 25px;
-    border-radius: 15px;
-    margin-bottom: 40px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+    border-radius: 14px;
+    margin-bottom: 24px;
+    border: 1px solid rgba($color-principal, 0.12);
 
     h3 {
         color: $color-principal;
@@ -55,7 +40,7 @@
             padding: 12px 15px 12px 45px;
             border: 2px solid $color-crema;
             border-radius: 30px;
-            font-family: $fuente-principal;
+            font-family: inherit;
             transition: all 0.3s ease;
 
             &:focus {
@@ -90,7 +75,6 @@
     gap: 18px;
     transition: transform 0.3s ease;
 
-    &:hover { transform: translateY(-5px); }
 
     h4 {
         margin: 0;
@@ -100,82 +84,152 @@
         padding-bottom: 8px;
     }
 
-    .input-group {
+    .time-range {
         display: flex;
-        flex-direction: column;
-        gap: 6px;
-        label { font-size: 0.85rem; font-weight: 700; color: $color-acento; }
-        input {
-            padding: 10px;
-            border: 1px solid rgba(0,0,0,0.1);
-            border-radius: 6px;
-            font-family: $fuente-principal;
-            &:focus { border-color: $color-principal; outline: none; }
-        }
-        small { font-size: 0.75rem; color: #777; line-height: 1.2; }
+        align-items: center;
+        gap: 8px;
+        span { font-size: 0.85rem; color: #7a6a63; }
+        input { flex: 1; min-width: 0; width: 100%; }
     }
 }
 
-// --- TABLA Y EFECTO DE ELIMINACIÓN ---
+// --- TABLA DE ALUMNOS ---
 .table-scroll-container {
     max-height: 450px;
-    overflow-y: auto;
-    border-radius: 10px; 
+    overflow: auto;
+    border-radius: 12px;
     border: 1px solid $color-crema;
-    &::-webkit-scrollbar { width: 8px; }
+    scrollbar-width: thin;
+    scrollbar-color: rgba($color-principal, 0.4) transparent;
+    &::-webkit-scrollbar { width: 8px; height: 8px; }
     &::-webkit-scrollbar-track { background: $color-crema; }
-    &::-webkit-scrollbar-thumb { background: $color-principal; border-radius: 10px; }
+    &::-webkit-scrollbar-thumb { background: rgba($color-principal, 0.5); border-radius: 10px; }
 }
 
-.table-responsive {
+.admin-table {
     width: 100%;
-    overflow-x: auto;
-    .admin-table {
-        width: 100%;
-        min-width: 700px;
-        border-collapse: collapse;
-        th {
-            background-color: $color-principal;
-            color: white;
-            padding: 15px;
-            position: sticky;
-            top: 0;
-            z-index: 5;
-        }
-        td {
-            padding: 15px;
-            border-bottom: 1px solid $color-crema;
-            color: $color-texto;
-            background: white;
-        }
-        tr:hover td { background-color: #faf9f6; }
+    border-collapse: collapse;
+    font-size: 0.9rem;
 
-        // --- EFECTO DE VIBRACIÓN AL ELIMINAR ---
-        .row-confirm-delete {
-            background-color: rgba(255, 82, 82, 0.2) !important;
-            animation: shake 0.4s ease-in-out;
-            transition: background-color 0.3s ease;
-            td { background-color: transparent; } // Para que se vea el rojo de la fila
-        }
+    th {
+        background-color: $color-principal;
+        color: $color-blanco;
+        padding: 14px 16px;
+        text-align: left;
+        font-size: 0.78rem;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        position: sticky;
+        top: 0;
+        z-index: 5;
+    }
+    td {
+        padding: 12px 16px;
+        border-bottom: 1px solid $color-crema;
+        color: $color-texto;
+        background: white;
+        vertical-align: middle;
+    }
+    tr:last-child td { border-bottom: none; }
+    tbody tr:hover td { background-color: #faf9f6; }
+    td.table-empty { text-align: center; color: #8a7c76; padding: 28px 16px; }
+    .cell-actions { white-space: nowrap; }
+}
+
+.credits-badge {
+    display: inline-block;
+    min-width: 34px;
+    padding: 4px 10px;
+    border-radius: 50px;
+    background: $color-crema;
+    color: $color-acento;
+    font-weight: 700;
+    text-align: center;
+}
+
+// --- DÍAS DE APERTURA ---
+.config-hint { font-size: 0.88rem; color: #6d5f59; margin-bottom: 12px; }
+
+.dias-semana-grid {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 28px;
+
+    label {
+        // El texto del día se ve como un chip que se pinta al marcarlo
+        position: relative;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 58px;
+        padding: 10px 14px;
+        border-radius: 50px;
+        border: 1.5px solid rgba($color-principal, 0.3);
+        color: $color-principal;
+        font-weight: 600;
+        font-size: 0.88rem;
+        transition: all 0.2s ease;
+        user-select: none;
+        input { position: absolute; opacity: 0; pointer-events: none; }
+        &:hover { border-color: $color-principal; }
+        &:has(input:checked) { background: $color-principal; border-color: $color-principal; color: white; }
+        &:has(input:focus-visible) { outline: 3px solid rgba($color-principal, 0.35); outline-offset: 2px; }
     }
 }
 
-@keyframes shake {
-    0%, 100% { transform: translateX(0); }
-    25% { transform: translateX(-5px); }
-    75% { transform: translateX(5px); }
+// --- ACCIONES FINALES ---
+.config-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 22px;
+    margin: 30px 0 10px;
+    text-align: center;
+
+    .maintenance-box {
+        max-width: 560px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        small { font-size: 0.78rem; color: #8a7c76; line-height: 1.4; }
+    }
 }
 
 // --- RESPONSIVE ---
 @media (max-width: 768px) {
+    .config-section { padding: 18px 14px; }
     .actions-grid-admin {
         flex-direction: column;
         align-items: stretch;
         .btn-group-admin {
-            flex-direction: column;
-            button { width: 100%; }
+            button { flex: 1; }
         }
     }
-    .classes-grid { grid-template-columns: 1fr; }
-    .admin-config-container { padding: 15px 2%; }
+    .classes-grid { grid-template-columns: minmax(0, 1fr); gap: 16px; }
+    .class-config-card { padding: 18px; min-width: 0; }
+
+    // En el celular cada alumno es una tarjetita en vez de una fila ancha
+    .table-scroll-container { border: none; max-height: 60vh; }
+    .admin-table {
+        thead { display: none; }
+        tr {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 2px 12px;
+            padding: 12px 14px;
+            border: 1px solid $color-crema;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            background: white;
+        }
+        td { padding: 0; border: none; background: transparent !important; }
+        td[data-label="Nombre"] { font-weight: 700; grid-column: 1; }
+        td[data-label="Email"] { grid-column: 1; font-size: 0.82rem; color: #6d5f59; word-break: break-all; }
+        td[data-label="Créditos"] { grid-column: 2; grid-row: 1; text-align: right; }
+        td[data-label="Acciones"] { grid-column: 2; grid-row: 2; text-align: right; }
+        td.table-empty { grid-column: 1 / -1; }
+    }
 }

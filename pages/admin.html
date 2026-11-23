@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pilatea - Panel de Gestión</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../css/main.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
@@ -13,7 +15,7 @@
     <header class="main-header">
         <div class="logo-container">
             <a href="../index.html">
-                <img src="../assets/img/logo-pilatea-removebg-preview.png" alt="Logo">
+                <img src="../assets/img/logo-pilatea-removebg-preview.png" alt="Logo Pilatea">
             </a>
         </div>
         <div class="header-actions">
@@ -22,50 +24,200 @@
     </header>
 
     <main class="admin-container">
-        <h2>Panel de Control - Gestión de Clases</h2>
-
-        <div class="admin-nav-tabs">
-            <a href="admin.html" class="tab-link active">Gestión Diaria</a>
-            <a href="admin-config.html" class="tab-link">Configuración de Sistema</a>
-        </div>
-
-        <div class="admin-summary">
-            <div class="summary-card">
-                <span class="label">Clases (Reservas) Hoy</span>
-                <span class="value" id="dash-clases-hoy">0</span>
-            </div>
-            <div class="summary-card">
-                <span class="label">Alumnos Registrados</span>
-                <span class="value" id="dash-alumnos-totales">0</span>
-            </div>
-            <div class="summary-card">
-                <span class="label">Cupos Libres Hoy</span>
-                <span class="value" id="dash-cupos-hoy">0</span>
-            </div>
-        </div>
-
-        <div class="admin-filters">
-            <div class="filter-group">
-                <label for="filter-date">Fecha de Gestión:</label>
-                <input type="date" id="filter-date" class="input-calendar">
+        <div class="admin-panel">
+            <div class="admin-panel-head">
+                <h2>Panel de Control</h2>
+                <div class="admin-nav-tabs" role="tablist" aria-label="Secciones del panel">
+                    <button type="button" class="tab-link active" role="tab" id="tab-diaria"
+                            aria-controls="panel-diaria" aria-selected="true" data-tab="diaria">
+                        <i class="fa-solid fa-calendar-day"></i> Gestión Diaria
+                    </button>
+                    <button type="button" class="tab-link" role="tab" id="tab-config"
+                            aria-controls="panel-config" aria-selected="false" tabindex="-1" data-tab="config">
+                        <i class="fa-solid fa-sliders"></i> Configuración de Sistema
+                    </button>
+                </div>
             </div>
 
-            <div class="filter-group">
-                <label for="filter-class">Clase:</label>
-                <select id="filter-class" class="select-filter">
-                    <option value="all">Todas las clases</option>
-                    <option value="reformer">Pilates Reformer</option>
-                    <option value="hiit">HIIT Barre</option>
-                    <option value="yoga">Yoga</option>
-                </select>
-            </div>
-            <button class="btn-primary" id="btn-refresh">Actualizar Vista</button>
-        </div>
+            <!-- ============ GESTIÓN DIARIA ============ -->
+            <section id="panel-diaria" class="tab-panel" role="tabpanel" aria-labelledby="tab-diaria">
+                <div class="admin-summary">
+                    <div class="summary-card">
+                        <span class="label">Reservas del día</span>
+                        <span class="value" id="dash-clases-hoy">0</span>
+                    </div>
+                    <div class="summary-card">
+                        <span class="label">Alumnos registrados</span>
+                        <span class="value" id="dash-alumnos-totales">0</span>
+                    </div>
+                    <div class="summary-card">
+                        <span class="label">Cupos libres del día</span>
+                        <span class="value" id="dash-cupos-hoy">0</span>
+                    </div>
+                </div>
 
-        <div id="daily-schedule-container" class="schedule-container">
-            <p class="loading-text">Cargando cronograma del día...</p>
+                <div class="admin-filters">
+                    <div class="filter-group">
+                        <label for="filter-date">Fecha</label>
+                        <input type="date" id="filter-date" class="input-calendar">
+                    </div>
+                    <div class="filter-group">
+                        <label for="filter-class">Clase</label>
+                        <select id="filter-class" class="select-filter">
+                            <option value="all">Todas las clases</option>
+                            <option value="reformer">Pilates Reformer</option>
+                            <option value="hiit">HIIT Barre</option>
+                            <option value="yoga">Yoga</option>
+                        </select>
+                    </div>
+                    <div class="filter-group filter-group-status">
+                        <span class="filter-label" id="filter-status-label">Mostrar</span>
+                        <div class="filter-chips" role="radiogroup" aria-labelledby="filter-status-label" id="filter-status">
+                            <button type="button" class="chip active" role="radio" aria-checked="true" data-estado="todas">Todas <span class="chip-count"></span></button>
+                            <button type="button" class="chip" role="radio" aria-checked="false" data-estado="con-alumnos">Con alumnos <span class="chip-count"></span></button>
+                            <button type="button" class="chip" role="radio" aria-checked="false" data-estado="proximas">Próximas <span class="chip-count"></span></button>
+                            <button type="button" class="chip" role="radio" aria-checked="false" data-estado="terminadas">Terminadas <span class="chip-count"></span></button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="daily-schedule-container" class="schedule-container" aria-live="polite">
+                    <p class="loading-text">Cargando cronograma del día...</p>
+                </div>
+            </section>
+
+            <!-- ============ CONFIGURACIÓN DE SISTEMA ============ -->
+            <section id="panel-config" class="tab-panel" role="tabpanel" aria-labelledby="tab-config" hidden>
+                <section class="config-section">
+                    <h3><i class="fa-solid fa-users"></i> Gestión de Alumnos</h3>
+                    <div class="actions-grid-admin">
+                        <div class="search-container">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <input type="search" id="search-student" placeholder="Buscar por nombre o email..." aria-label="Buscar alumno">
+                        </div>
+                        <div class="btn-group-admin">
+                            <button type="button" class="btn-action-small" data-open-modal="modal-student"><i class="fa-solid fa-user-plus"></i> Nuevo Alumno</button>
+                            <button type="button" class="btn-action-small" data-open-modal="modal-credits"><i class="fa-solid fa-coins"></i> Cargar Créditos</button>
+                        </div>
+                    </div>
+                    <div class="table-scroll-container">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Email</th>
+                                    <th>Créditos</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="student-list"></tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <section class="config-section">
+                    <h3><i class="fa-solid fa-gear"></i> Configuración de Clases</h3>
+                    <div id="disciplinas-container" class="classes-grid"></div>
+                </section>
+
+                <section class="config-section">
+                    <h3><i class="fa-solid fa-calendar-check"></i> Días de Apertura</h3>
+                    <p class="config-hint">Elegí los días que el estudio ofrece clases habitualmente:</p>
+                    <div class="dias-semana-grid">
+                        <label><input type="checkbox" class="check-dia" value="1"> Lun</label>
+                        <label><input type="checkbox" class="check-dia" value="2"> Mar</label>
+                        <label><input type="checkbox" class="check-dia" value="3"> Mié</label>
+                        <label><input type="checkbox" class="check-dia" value="4"> Jue</label>
+                        <label><input type="checkbox" class="check-dia" value="5"> Vie</label>
+                        <label><input type="checkbox" class="check-dia" value="6"> Sáb</label>
+                        <label><input type="checkbox" class="check-dia" value="0"> Dom</label>
+                    </div>
+
+                    <h3><i class="fa-solid fa-calendar-xmark"></i> Días Cerrados Específicos</h3>
+                    <div class="form-field">
+                        <label for="dias-cerrado">Feriados o fechas puntuales (separadas por coma)</label>
+                        <input type="text" id="dias-cerrado" placeholder="Ej: 2026-05-25, 2026-06-20">
+                        <small>Formato: AAAA-MM-DD</small>
+                    </div>
+                </section>
+
+                <div class="config-actions">
+                    <button type="button" id="btn-save-config" class="btn-primary btn-lg">
+                        <i class="fa-solid fa-floppy-disk"></i> Guardar toda la configuración
+                    </button>
+                    <div class="maintenance-box">
+                        <button type="button" id="btn-recalcular-cupos" class="btn-outline">
+                            <i class="fa-solid fa-rotate"></i> Recalcular cupos de las clases
+                        </button>
+                        <small>Pasa las reservas viejas al formato nuevo y recalcula cuántos lugares ocupados tiene cada clase. Hacelo una vez después de actualizar las reglas, o si un cupo no cuadra.</small>
+                    </div>
+                </div>
+            </section>
         </div>
     </main>
+
+    <!-- ============ MODALES ============ -->
+    <div id="modal-student" class="modal-overlay" aria-hidden="true">
+        <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="modal-student-title">
+            <div class="modal-header">
+                <span class="modal-icon"><i class="fa-solid fa-user-plus"></i></span>
+                <div class="modal-titles">
+                    <h3 id="modal-student-title">Nuevo alumno</h3>
+                    <p>Le llega un mail para que elija su contraseña.</p>
+                </div>
+                <button type="button" class="close-modal" data-close-modal aria-label="Cerrar">&times;</button>
+            </div>
+            <form id="form-add-student" class="modal-body">
+                <div class="form-field">
+                    <label for="new-student-name"><i class="fa-solid fa-user"></i> Nombre completo</label>
+                    <input type="text" id="new-student-name" placeholder="Ej: Ana López" autocomplete="off" required>
+                </div>
+                <div class="form-field">
+                    <label for="new-student-email"><i class="fa-solid fa-envelope"></i> Email</label>
+                    <input type="email" id="new-student-email" placeholder="ana@mail.com" autocomplete="off" required>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-ghost" data-close-modal>Cancelar</button>
+                    <button type="submit" class="btn-primary">Registrar alumno</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="modal-credits" class="modal-overlay" aria-hidden="true">
+        <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="modal-credits-title">
+            <div class="modal-header">
+                <span class="modal-icon"><i class="fa-solid fa-coins"></i></span>
+                <div class="modal-titles">
+                    <h3 id="modal-credits-title">Cargar créditos</h3>
+                    <p>Se suman a los que el alumno ya tiene.</p>
+                </div>
+                <button type="button" class="close-modal" data-close-modal aria-label="Cerrar">&times;</button>
+            </div>
+            <form id="form-add-credits" class="modal-body">
+                <div class="form-field">
+                    <label for="search-student-modal"><i class="fa-solid fa-user"></i> Alumno</label>
+                    <input type="search" id="search-student-modal" placeholder="Filtrar por nombre o email..." autocomplete="off">
+                    <select id="select-student-credits" required aria-label="Alumno"></select>
+                    <small id="credits-current" class="field-hint"></small>
+                </div>
+                <div class="form-field">
+                    <label for="input-credits-amount"><i class="fa-solid fa-plus"></i> Cantidad</label>
+                    <div class="quick-amounts" role="group" aria-label="Cantidades rápidas">
+                        <button type="button" class="chip" data-amount="1">1</button>
+                        <button type="button" class="chip" data-amount="4">4</button>
+                        <button type="button" class="chip" data-amount="8">8</button>
+                        <button type="button" class="chip" data-amount="12">12</button>
+                    </div>
+                    <input type="number" id="input-credits-amount" value="4" min="1" required>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-ghost" data-close-modal>Cancelar</button>
+                    <button type="submit" class="btn-primary">Confirmar carga</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <footer>
         <div class="footer-content">
