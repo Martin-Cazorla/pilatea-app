@@ -1,0 +1,121 @@
+rules_version = '2';
+
+// Reglas de seguridad de Firestore para PILATEA.
+// Deploy: firebase deploy --only firestore:rules
+//
+// Modelo de permisos:
+// - Admin: documento alumnos/{uid} con role == 'admin'. Puede leer y escribir todo.
+// - Alumno: lee su propio documento y sus reservas; solo puede mover sus créditos
+//   de a 1, y únicamente en el mismo batch en que crea o cancela una reserva propia.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ---------- Helpers ----------
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isSelf(uid) {
+      return signedIn() && request.auth.uid == uid;
+    }
+
+    function alumnoPath(uid) {
+      return /databases/$(database)/documents/alumnos/$(uid);
+    }
+
+    function reservaPath(id) {
+      return /databases/$(database)/documents/reservas/$(id);
+    }
+
+    function isAdmin() {
+      return signedIn()
+        && exists(alumnoPath(request.auth.uid))
+        && get(alumnoPath(request.auth.uid)).data.get('role', '') == 'admin';
+    }
+
+    function onlyChanged(keys) {
+      return request.resource.data.diff(resource.data).affectedKeys().hasOnly(keys);
+    }
+
+    // Alumno descuenta 1 crédito al crear una reserva nueva propia en el mismo batch.
+    function isBookingDebit(uid) {
+      let id = request.resource.data.ultimaReserva;
+      return onlyChanged(['creditos', 'ultimaReserva'])
+        && id is string
+        && request.resource.data.creditos == resource.data.creditos - 1
+        && request.resource.data.creditos >= 0
+        && !exists(reservaPath(id))
+        && existsAfter(reservaPath(id))
+        && getAfter(reservaPath(id)).data.alumnoId == uid;
+    }
+
+    // Alumno recupera 1 crédito al borrar una reserva propia en el mismo batch.
+    function isCancelRefund(uid) {
+      let id = request.resource.data.ultimaCancelacion;
+      return onlyChanged(['creditos', 'ultimaCancelacion'])
+        && id is string
+        && request.resource.data.creditos == resource.data.creditos + 1
+        && exists(reservaPath(id))
+        && !existsAfter(reservaPath(id))
+        && get(reservaPath(id)).data.alumnoId == uid;
+    }
+
+    function isValidReserva(data) {
+      return data.keys().hasOnly(['alumnoId', 'alumnoNombre', 'fecha', 'hora',
+                                  'disciplina', 'disciplinaId', 'fechaCreacion'])
+        && data.keys().hasAll(['alumnoId', 'fecha', 'hora', 'disciplinaId'])
+        && data.fecha is string && data.fecha.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$')
+        && data.hora is string && data.hora.matches('^[0-9]{2}:00$')
+        && data.disciplinaId in ['reformer', 'hiit', 'yoga'];
+    }
+
+    // ---------- Alumnos ----------
+    match /alumnos/{uid} {
+      allow read: if isAdmin() || isSelf(uid);
+
+      // El alta de alumno crea el doc logueado como el alumno nuevo
+      // (createUserWithEmailAndPassword), así que se permite crear el propio
+      // doc solo con rol 'alumno' y 0 créditos.
+      allow create: if isAdmin()
+        || (isSelf(uid)
+            && request.resource.data.role == 'alumno'
+            && request.resource.data.creditos == 0);
+
+      allow update: if isAdmin()
+        || (isSelf(uid) && (isBookingDebit(uid) || isCancelRefund(uid)));
+
+      allow delete: if isAdmin();
+    }
+
+    // ---------- Reservas ----------
+    match /reservas/{reservaId} {
+      // Todo alumno logueado necesita leer las reservas para calcular cupos.
+      allow read: if signedIn();
+
+      allow create: if isAdmin()
+        || (signedIn()
+            && request.resource.data.alumnoId == request.auth.uid
+            && isValidReserva(request.resource.data)
+            && getAfter(alumnoPath(request.auth.uid)).data.get('ultimaReserva', '') == reservaId
+            && getAfter(alumnoPath(request.auth.uid)).data.creditos
+               == get(alumnoPath(request.auth.uid)).data.creditos - 1);
+
+      allow update: if isAdmin();
+
+      allow delete: if isAdmin()
+        || (signedIn()
+            && resource.data.alumnoId == request.auth.uid
+            && getAfter(alumnoPath(request.auth.uid)).data.get('ultimaCancelacion', '') == reservaId
+            && getAfter(alumnoPath(request.auth.uid)).data.creditos
+               == get(alumnoPath(request.auth.uid)).data.creditos + 1);
+    }
+
+    // ---------- Configuración (clases y calendario) ----------
+    match /configuracion/{docId} {
+      allow read: if signedIn();
+      allow write: if isAdmin();
+    }
+
+    // Todo lo demás queda cerrado.
+  }
+}

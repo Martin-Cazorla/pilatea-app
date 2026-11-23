@@ -1,7 +1,7 @@
 import { db, auth } from './config/firebase.js'; 
 import { 
     doc, getDoc, collection, query, where, getDocs, 
-    updateDoc, increment, addDoc, onSnapshot, deleteDoc 
+    increment, onSnapshot, writeBatch
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
@@ -148,8 +148,11 @@ async function handleReservation(time, dateStr) {
 
         if (!confirm(`¿Confirmar reserva para ${selectedClassName}?`)) return;
 
-        await updateDoc(doc(db, "alumnos", currentUser.uid), { creditos: increment(-1) });
-        await addDoc(collection(db, "reservas"), {
+        // Descuento de crédito y reserva van juntos en un batch: las reglas de
+        // Firestore solo permiten tocar créditos si la reserva se crea a la vez.
+        const reservaRef = doc(collection(db, "reservas"));
+        const batch = writeBatch(db);
+        batch.set(reservaRef, {
             alumnoId: currentUser.uid,
             alumnoNombre: userWelcome.querySelector('strong').innerText,
             fecha: dateStr,
@@ -158,6 +161,11 @@ async function handleReservation(time, dateStr) {
             disciplinaId: selectedClassId,
             fechaCreacion: new Date()
         });
+        batch.update(doc(db, "alumnos", currentUser.uid), {
+            creditos: increment(-1),
+            ultimaReserva: reservaRef.id
+        });
+        await batch.commit();
         alert("¡Reserva confirmada!");
         generateSlots(dateStr);
     } catch (e) { console.error(e); }
@@ -166,8 +174,13 @@ async function handleReservation(time, dateStr) {
 async function handleCancel(reservationId) {
     if (!confirm("¿Querés cancelar esta clase?")) return;
     try {
-        await deleteDoc(doc(db, "reservas", reservationId));
-        await updateDoc(doc(db, "alumnos", currentUser.uid), { creditos: increment(1) });
+        const batch = writeBatch(db);
+        batch.delete(doc(db, "reservas", reservationId));
+        batch.update(doc(db, "alumnos", currentUser.uid), {
+            creditos: increment(1),
+            ultimaCancelacion: reservationId
+        });
+        await batch.commit();
         generateSlots(selectedDate.toISOString().split('T')[0]);
     } catch (e) { alert("Error al cancelar."); }
 }
