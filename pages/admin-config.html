@@ -4,117 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Configuración - Pilatea</title>
-    <link rel="stylesheet" href="../css/main.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- La configuración ahora vive como pestaña dentro del panel. Esta página
+         solo redirige, para no romper enlaces o favoritos viejos. -->
+    <meta http-equiv="refresh" content="0; url=admin.html#config">
+    <script>location.replace('admin.html#config');</script>
 </head>
-<body class="page-config" style="visibility:hidden">
-    <header class="main-header">
-        <div class="logo-container">
-            <a href="../index.html">
-                <img src="../assets/img/logo-pilatea-removebg-preview.png" alt="Logo Pilatea">
-            </a>
-        </div>
-        <div class="header-actions">
-            <a href="admin.html" class="btn-back">Volver al Panel</a>
-        </div>
-    </header>
-    
-    <main class="admin-config-container">
-        <h2>Configuración del Sistema</h2>
-
-        <section class="config-section">
-            <h3><i class="fa-solid fa-users"></i> Gestión de Alumnos</h3>
-            <div class="actions-grid-admin">
-                <div class="search-container">
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                    <input type="text" id="search-student" placeholder="Buscar por nombre o email...">
-                </div>
-                <div class="btn-group-admin">
-                    <button class="btn-action-small" onclick="openModal('add-student')">Nuevo Alumno</button>
-                    <button class="btn-action-small" onclick="openModal('add-credits')">Cargar Créditos</button>
-                </div>
-            </div>
-            <div class="table-scroll-container">
-                <table class="admin-table">
-                    <thead>
-                        <tr>
-                            <th>Nombre</th>
-                            <th>Email</th>
-                            <th>Créditos</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody id="student-list"></tbody>
-                </table>
-            </div>
-        </section>
-
-        <section class="config-section">
-            <h3><i class="fa-solid fa-gear"></i> Configuración de Clases</h3>
-            <div id="disciplinas-container" class="classes-grid"></div>
-        </section>
-
-        <section class="config-section">
-            <h3><i class="fa-solid fa-calendar-check"></i> Días de Apertura</h3>
-            <p style="font-size: 0.9rem; color: #666; margin-bottom: 10px;">Selecciona los días que el estudio ofrece clases habitualmente:</p>
-            <div class="dias-semana-grid" style="display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 20px; background: #f9f9f9; padding: 15px; border-radius: 8px;">
-                <label><input type="checkbox" class="check-dia" value="1"> Lun</label>
-                <label><input type="checkbox" class="check-dia" value="2"> Mar</label>
-                <label><input type="checkbox" class="check-dia" value="3"> Mié</label>
-                <label><input type="checkbox" class="check-dia" value="4"> Jue</label>
-                <label><input type="checkbox" class="check-dia" value="5"> Vie</label>
-                <label><input type="checkbox" class="check-dia" value="6"> Sáb</label>
-                <label><input type="checkbox" class="check-dia" value="0"> Dom</label>
-            </div>
-
-            <h3><i class="fa-solid fa-calendar-xmark"></i> Días Cerrados Específicos</h3>
-            <div class="input-group">
-                <label for="dias-cerrado">Feriados o fechas puntuales (Separar por coma):</label>
-                <input type="text" id="dias-cerrado" placeholder="Ej: 2026-05-25, 2026-06-20" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
-                <small style="display:block; margin-top:5px; color:#888;">Formato: AAAA-MM-DD</small>
-            </div>
-        </section>
-
-        <div class="save-all-container" style="margin: 30px 0; text-align: center;">
-            <button id="btn-save-config" class="btn-action btn-save" style="padding: 15px 30px; font-size: 1.1rem;">Guardar Toda la Configuración</button>
-        </div>
-
-        <section class="maintenance-section" style="margin: 30px 0; text-align: center;">
-            <button id="btn-recalcular-cupos" class="btn-action" style="padding: 10px 20px;">Recalcular cupos de las clases</button>
-            <small style="display:block; margin-top:5px; color:#888;">Pasa las reservas viejas al formato nuevo y recalcula cuántos lugares ocupados tiene cada clase. Hacelo una vez después de actualizar las reglas, o si un cupo no cuadra.</small>
-        </section>
-    </main>
-
-    <div id="modal-student" class="modal-overlay">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Nuevo Alumno</h3>
-                <button onclick="closeModal('modal-student')">&times;</button>
-            </div>
-            <form id="form-add-student" class="modal-body">
-                <input type="text" id="new-student-name" placeholder="Nombre Completo" required>
-                <input type="email" id="new-student-email" placeholder="Email" required>
-                <button type="submit" class="btn-action">Registrar Alumno</button>
-            </form>
-        </div>
-    </div>
-
-    <div id="modal-credits" class="modal-overlay">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Cargar Créditos</h3>
-                <button onclick="closeModal('modal-credits')">&times;</button>
-            </div>
-            <form id="form-add-credits" class="modal-body">
-                <input type="text" id="search-student-modal" placeholder="Filtrar alumno...">
-                <select id="select-student-credits" required></select>
-                <input type="number" id="input-credits-amount" value="4" min="1">
-                <button type="submit" class="btn-primary">Confirmar Carga</button>
-            </form>
-        </div>
-    </div>
-
-    <script src="../js/modals.js"></script>
-    <script type="module" src="../js/admin-firebase.js"></script>
+<body>
+    <p><a href="admin.html#config">Ir a la configuración del sistema</a></p>
 </body>
 </html>
