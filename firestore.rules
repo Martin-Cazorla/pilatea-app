@@ -5,8 +5,19 @@ rules_version = '2';
 //
 // Modelo de permisos:
 // - Admin: documento alumnos/{uid} con role == 'admin'. Puede leer y escribir todo.
-// - Alumno: lee su propio documento y sus reservas; solo puede mover sus créditos
-//   de a 1, y únicamente en el mismo batch en que crea o cancela una reserva propia.
+// - Alumno: lee su propio documento, sus reservas y los turnos; solo puede mover
+//   sus créditos de a 1, y únicamente en la misma escritura en que crea o
+//   cancela una reserva propia.
+//
+// Reservas y cupo:
+// - turnos/{disciplinaId}_{fecha}_{HHMM} lleva el contador `ocupados` de la clase.
+// - reservas/{turnoId}_{uid}: un alumno tiene a lo sumo una reserva por clase.
+// - Reservar = crear la reserva + ocupados+1 (sin pasar las vacantes de
+//   configuracion/clases) + creditos-1, en la misma transacción.
+// - Cancelar = borrar la reserva + ocupados-1 + creditos+1, y solo antes de
+//   que empiece la clase.
+// - Como ocupados tiene que ser exactamente el valor anterior + 1, dos alumnos
+//   que van por el último cupo a la vez no pueden pasar los dos.
 service cloud.firestore {
   match /databases/{database}/documents {
 
@@ -27,6 +38,14 @@ service cloud.firestore {
       return /databases/$(database)/documents/reservas/$(id);
     }
 
+    function turnoPath(id) {
+      return /databases/$(database)/documents/turnos/$(id);
+    }
+
+    function configClasesPath() {
+      return /databases/$(database)/documents/configuracion/clases;
+    }
+
     function isAdmin() {
       return signedIn()
         && exists(alumnoPath(request.auth.uid))
@@ -37,7 +56,42 @@ service cloud.firestore {
       return request.resource.data.diff(resource.data).affectedKeys().hasOnly(keys);
     }
 
-    // Alumno descuenta 1 crédito al crear una reserva nueva propia en el mismo batch.
+    function turnoIdDe(d) {
+      return d.disciplinaId + '_' + d.fecha + '_' + d.hora.replace(':', '');
+    }
+
+    function reservaIdDe(d) {
+      return turnoIdDe(d) + '_' + d.alumnoId;
+    }
+
+    // Inicio de la clase. fecha 'YYYY-MM-DD' y hora 'HH:00' están en hora de
+    // Argentina, que es UTC-3 todo el año (no hay horario de verano).
+    function inicioClase(d) {
+      let f = d.fecha.split('-');
+      return timestamp.date(int(f[0]), int(f[1]), int(f[2]))
+        + duration.value(int(d.hora.split(':')[0]) + 3, 'h');
+    }
+
+    function claseFutura(d) {
+      return request.time < inicioClase(d);
+    }
+
+    // Vacantes que configuró el admin (5 si no hay configuración, como el cliente).
+    function vacantes(disciplinaId) {
+      return exists(configClasesPath())
+        ? int(get(configClasesPath()).data.get(disciplinaId, {}).get('vacantes', 5))
+        : 5;
+    }
+
+    function ocupadosAntes(turnoId) {
+      return exists(turnoPath(turnoId)) ? get(turnoPath(turnoId)).data.ocupados : 0;
+    }
+
+    function ocupadosDespues(turnoId) {
+      return existsAfter(turnoPath(turnoId)) ? getAfter(turnoPath(turnoId)).data.ocupados : 0;
+    }
+
+    // Alumno descuenta 1 crédito al crear una reserva nueva propia en la misma escritura.
     function isBookingDebit(uid) {
       let id = request.resource.data.ultimaReserva;
       return onlyChanged(['creditos', 'ultimaReserva'])
@@ -49,7 +103,8 @@ service cloud.firestore {
         && getAfter(reservaPath(id)).data.alumnoId == uid;
     }
 
-    // Alumno recupera 1 crédito al borrar una reserva propia en el mismo batch.
+    // Alumno recupera 1 crédito al borrar una reserva propia en la misma escritura.
+    // (La regla de borrado de la reserva exige que la clase no haya empezado.)
     function isCancelRefund(uid) {
       let id = request.resource.data.ultimaCancelacion;
       return onlyChanged(['creditos', 'ultimaCancelacion'])
@@ -69,6 +124,25 @@ service cloud.firestore {
         && data.disciplinaId in ['reformer', 'hiit', 'yoga'];
     }
 
+    // Alumno suma su reserva a un turno: ocupados sube exactamente 1, sin pasar
+    // las vacantes, y la reserva {turnoId}_{uid} se crea en la misma escritura.
+    function isTurnoIngreso(turnoId, d) {
+      let r = reservaPath(turnoId + '_' + request.auth.uid);
+      return d.ocupados == ocupadosAntes(turnoId) + 1
+        && d.ocupados <= vacantes(d.disciplinaId)
+        && !exists(r)
+        && existsAfter(r);
+    }
+
+    // Alumno libera su lugar: ocupados baja exactamente 1 y su reserva se borra.
+    function isTurnoEgreso(turnoId, d) {
+      let r = reservaPath(turnoId + '_' + request.auth.uid);
+      return d.ocupados == ocupadosAntes(turnoId) - 1
+        && d.ocupados >= 0
+        && exists(r)
+        && !existsAfter(r);
+    }
+
     // ---------- Alumnos ----------
     match /alumnos/{uid} {
       allow read: if isAdmin() || isSelf(uid);
@@ -83,24 +157,57 @@ service cloud.firestore {
       allow delete: if isAdmin();
     }
 
+    // ---------- Turnos (contador de cupo por clase) ----------
+    match /turnos/{turnoId} {
+      // El alumno necesita los contadores para ver cuántos cupos quedan.
+      allow read: if signedIn();
+
+      allow create: if isAdmin()
+        || (signedIn()
+            && request.resource.data.keys().hasOnly(['disciplinaId', 'fecha', 'hora', 'ocupados'])
+            && request.resource.data.disciplinaId is string
+            && request.resource.data.fecha is string
+            && request.resource.data.hora is string
+            && turnoId == turnoIdDe(request.resource.data)
+            && isTurnoIngreso(turnoId, request.resource.data));
+
+      allow update: if isAdmin()
+        || (signedIn()
+            && onlyChanged(['ocupados'])
+            && (isTurnoIngreso(turnoId, request.resource.data)
+                || isTurnoEgreso(turnoId, request.resource.data)));
+
+      allow delete: if isAdmin();
+    }
+
     // ---------- Reservas ----------
     match /reservas/{reservaId} {
-      // Todo alumno logueado necesita leer las reservas para calcular cupos.
-      allow read: if signedIn();
+      // Cada alumno ve solo sus reservas; los cupos salen de /turnos.
+      allow read: if isAdmin()
+        || (signedIn() && resource.data.alumnoId == request.auth.uid);
 
       allow create: if isAdmin()
         || (signedIn()
             && request.resource.data.alumnoId == request.auth.uid
             && isValidReserva(request.resource.data)
+            && reservaId == reservaIdDe(request.resource.data)
+            && claseFutura(request.resource.data)
+            && ocupadosDespues(turnoIdDe(request.resource.data))
+               == ocupadosAntes(turnoIdDe(request.resource.data)) + 1
             && getAfter(alumnoPath(request.auth.uid)).data.get('ultimaReserva', '') == reservaId
             && getAfter(alumnoPath(request.auth.uid)).data.creditos
                == get(alumnoPath(request.auth.uid)).data.creditos - 1);
 
       allow update: if isAdmin();
 
+      // El alumno cancela solo antes de que empiece la clase; después, solo el admin.
       allow delete: if isAdmin()
         || (signedIn()
             && resource.data.alumnoId == request.auth.uid
+            && reservaId == reservaIdDe(resource.data)
+            && claseFutura(resource.data)
+            && ocupadosDespues(turnoIdDe(resource.data))
+               == ocupadosAntes(turnoIdDe(resource.data)) - 1
             && getAfter(alumnoPath(request.auth.uid)).data.get('ultimaCancelacion', '') == reservaId
             && getAfter(alumnoPath(request.auth.uid)).data.creditos
                == get(alumnoPath(request.auth.uid)).data.creditos + 1);

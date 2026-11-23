@@ -1,9 +1,12 @@
-import { db, auth } from './config/firebase.js'; 
-import { 
-    doc, getDoc, collection, query, where, getDocs, 
-    increment, onSnapshot, writeBatch
+import { db, auth } from './config/firebase.js';
+import {
+    doc, getDoc, collection, query, where, getDocs, onSnapshot
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import {
+    fechaArgentina, fechaStr, claseYaEmpezo, turnoIdDe, reservaIdDe,
+    reservarClase, cancelarReserva, ReservaError, VACANTES_POR_DEFECTO
+} from './utils/turnos.js';
 
 // Referencias DOM
 const grid = document.getElementById('time-slots-grid');
@@ -14,29 +17,40 @@ const monthYearText = document.getElementById('calendar-month-year');
 const reservationList = document.getElementById('reservation-list');
 const classSelect = document.getElementById('class-select');
 
-// Estado
+// Estado. Las fechas se manejan como 'YYYY-MM-DD' en hora de Argentina,
+// sin importar la zona horaria del dispositivo del alumno.
 let currentUser = null;
 let userCredits = 0;
-let currentDate = new Date(); 
-let selectedDate = new Date(); 
+let userName = '';
+let selectedDateStr = fechaArgentina();
+const [hoyY, hoyM] = selectedDateStr.split('-').map(Number);
+let calYear = hoyY;
+let calMonth = hoyM - 1; // 0-11
+let misReservas = new Map(); // id -> datos
+
+// Para mostrar una fecha 'YYYY-MM-DD' sin que la zona horaria la corra de día.
+const fechaComoDate = (str) => new Date(`${str}T12:00:00Z`);
 
 // --- FUNCIONES DE INTERFAZ ---
 
 function updateDateDisplay() {
     if (!dateDisplay) return;
-    const options = { weekday: 'long', day: 'numeric', month: 'long' };
-    const formattedDate = selectedDate.toLocaleDateString('es-ES', options);
+    const options = { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'UTC' };
+    const formattedDate = fechaComoDate(selectedDateStr).toLocaleDateString('es-AR', options);
     dateDisplay.innerText = formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1);
 }
 
 function renderCalendar() {
     if (!daysContainer || !monthYearText) return;
-    const year = currentDate.getFullYear();
-    const month = currentDate.getMonth();
-    monthYearText.innerText = `${new Intl.DateTimeFormat('es-ES', { month: 'long' }).format(currentDate)} ${year}`;
+    const year = calYear;
+    const month = calMonth;
+    const nombreMes = new Intl.DateTimeFormat('es-AR', { month: 'long', timeZone: 'UTC' })
+        .format(new Date(Date.UTC(year, month, 15)));
+    monthYearText.innerText = `${nombreMes} ${year}`;
 
-    const firstDayIndex = new Date(year, month, 1).getDay();
-    const lastDay = new Date(year, month + 1, 0).getDate();
+    const firstDayIndex = new Date(Date.UTC(year, month, 1)).getUTCDay();
+    const lastDay = new Date(Date.UTC(year, month + 1, 0)).getUTCDate();
+    const todayStr = fechaArgentina();
     daysContainer.innerHTML = '';
 
     for (let x = 0; x < firstDayIndex; x++) {
@@ -49,23 +63,22 @@ function renderCalendar() {
         const dayBtn = document.createElement('button');
         dayBtn.classList.add('day');
         dayBtn.innerText = i;
-        const dateToCheck = new Date(year, month, i);
-        const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
-        const today = new Date(); today.setHours(0,0,0,0);
+        const dateStr = fechaStr(year, month, i);
 
-        if (dateToCheck < today) {
+        // Las fechas 'YYYY-MM-DD' se pueden comparar como texto.
+        if (dateStr < todayStr) {
             dayBtn.classList.add('past-day');
             dayBtn.disabled = true;
         } else {
             dayBtn.onclick = () => {
-                selectedDate = new Date(year, month, i);
+                selectedDateStr = dateStr;
                 updateDateDisplay();
                 renderCalendar();
                 generateSlots(dateStr);
             };
         }
-        if (dateStr === today.toISOString().split('T')[0]) dayBtn.classList.add('today');
-        if (dateStr === selectedDate.toISOString().split('T')[0]) dayBtn.classList.add('active');
+        if (dateStr === todayStr) dayBtn.classList.add('today');
+        if (dateStr === selectedDateStr) dayBtn.classList.add('active');
         daysContainer.appendChild(dayBtn);
     }
 }
@@ -75,12 +88,14 @@ function renderCalendar() {
 onAuthStateChanged(auth, async (user) => {
     if (user) {
         currentUser = user;
-        
+
         onSnapshot(doc(db, "alumnos", user.uid), (docSnap) => {
             if (docSnap.exists()) {
                 const data = docSnap.data();
                 userCredits = data.creditos || 0;
-                userWelcome.innerHTML = `Hola, <strong>${data.nombre}</strong> (Créditos: ${userCredits})`;
+                userName = data.nombre || '';
+                userWelcome.innerHTML = `Hola, <strong></strong> (Créditos: ${userCredits})`;
+                userWelcome.querySelector('strong').textContent = userName;
             }
         });
 
@@ -93,9 +108,7 @@ onAuthStateChanged(auth, async (user) => {
         fetchUserReservations();
         renderCalendar();
         updateDateDisplay();
-        
-        const todayStr = selectedDate.toISOString().split('T')[0];
-        generateSlots(todayStr);
+        generateSlots(selectedDateStr);
 
     } else {
         window.location.href = "login.html";
@@ -104,28 +117,38 @@ onAuthStateChanged(auth, async (user) => {
 
 if(classSelect) {
     classSelect.addEventListener('change', () => {
-        generateSlots(selectedDate.toISOString().split('T')[0]);
+        generateSlots(selectedDateStr);
     });
 }
 
-async function fetchUserReservations() {
+function fetchUserReservations() {
     const q = query(collection(db, "reservas"), where("alumnoId", "==", currentUser.uid));
     onSnapshot(q, (snapshot) => {
+        misReservas = new Map();
+        snapshot.forEach((d) => misReservas.set(d.id, { id: d.id, ...d.data() }));
+
+        const ordenadas = [...misReservas.values()]
+            .sort((a, b) => `${a.fecha} ${a.hora}`.localeCompare(`${b.fecha} ${b.hora}`));
+
         reservationList.innerHTML = '';
-        snapshot.forEach((doc) => {
-            const res = doc.data();
+        ordenadas.forEach((res) => {
+            const pasada = claseYaEmpezo(res.fecha, res.hora);
             const li = document.createElement('li');
             li.className = 'reservation-item';
             li.innerHTML = `
                 <div class="res-info">
-                    <span class="res-date">${res.fecha}</span>
-                    <span class="res-time">${res.hora}hs - <strong>${res.disciplina || 'Clase'}</strong></span>
+                    <span class="res-date"></span>
+                    <span class="res-time"></span>
                 </div>
-                <button class="btn-cancel" data-id="${doc.id}">
-                    <i class="fa-solid fa-trash"></i>
-                </button>
+                ${pasada
+                    ? '<small class="res-done">Finalizada</small>'
+                    : '<button class="btn-cancel" title="Cancelar"><i class="fa-solid fa-trash"></i></button>'}
             `;
-            li.querySelector('.btn-cancel').onclick = () => handleCancel(doc.id);
+            li.querySelector('.res-date').textContent = res.fecha;
+            li.querySelector('.res-time').innerHTML = `${res.hora}hs - <strong></strong>`;
+            li.querySelector('.res-time strong').textContent = res.disciplina || 'Clase';
+            const btn = li.querySelector('.btn-cancel');
+            if (btn) btn.onclick = () => handleCancel(res);
             reservationList.appendChild(li);
         });
     });
@@ -136,53 +159,39 @@ async function handleReservation(time, dateStr) {
     const selectedClassName = classSelect.options[classSelect.selectedIndex].text;
     const selectedClassId = classSelect.value;
 
+    const reservaId = reservaIdDe(turnoIdDe(selectedClassId, dateStr, time), currentUser.uid);
+    if (misReservas.has(reservaId)) return alert("Ya tenés una reserva para esta clase.");
+
+    if (!confirm(`¿Confirmar reserva para ${selectedClassName}?`)) return;
+
     try {
-        const qDuplicado = query(collection(db, "reservas"), 
-            where("fecha", "==", dateStr), 
-            where("hora", "==", time), 
-            where("alumnoId", "==", currentUser.uid),
-            where("disciplinaId", "==", selectedClassId));
-            
-        const snap = await getDocs(qDuplicado);
-        if (!snap.empty) return alert(`Ya tenés una reserva para esta clase.`);
-
-        if (!confirm(`¿Confirmar reserva para ${selectedClassName}?`)) return;
-
-        // Descuento de crédito y reserva van juntos en un batch: las reglas de
-        // Firestore solo permiten tocar créditos si la reserva se crea a la vez.
-        const reservaRef = doc(collection(db, "reservas"));
-        const batch = writeBatch(db);
-        batch.set(reservaRef, {
-            alumnoId: currentUser.uid,
-            alumnoNombre: userWelcome.querySelector('strong').innerText,
-            fecha: dateStr,
-            hora: time,
-            disciplina: selectedClassName,
+        await reservarClase(db, {
+            uid: currentUser.uid,
+            nombre: userName,
             disciplinaId: selectedClassId,
-            fechaCreacion: new Date()
+            disciplina: selectedClassName,
+            fecha: dateStr,
+            hora: time
         });
-        batch.update(doc(db, "alumnos", currentUser.uid), {
-            creditos: increment(-1),
-            ultimaReserva: reservaRef.id
-        });
-        await batch.commit();
         alert("¡Reserva confirmada!");
+    } catch (e) {
+        console.error(e);
+        alert(e instanceof ReservaError ? e.message : "No se pudo reservar. Probá de nuevo.");
+    } finally {
         generateSlots(dateStr);
-    } catch (e) { console.error(e); }
+    }
 }
 
-async function handleCancel(reservationId) {
+async function handleCancel(reserva) {
     if (!confirm("¿Querés cancelar esta clase?")) return;
     try {
-        const batch = writeBatch(db);
-        batch.delete(doc(db, "reservas", reservationId));
-        batch.update(doc(db, "alumnos", currentUser.uid), {
-            creditos: increment(1),
-            ultimaCancelacion: reservationId
-        });
-        await batch.commit();
-        generateSlots(selectedDate.toISOString().split('T')[0]);
-    } catch (e) { alert("Error al cancelar."); }
+        await cancelarReserva(db, { uid: currentUser.uid, reserva });
+    } catch (e) {
+        console.error(e);
+        alert(e instanceof ReservaError ? e.message : "Error al cancelar.");
+    } finally {
+        generateSlots(selectedDateStr);
+    }
 }
 
 async function generateSlots(dateStr) {
@@ -194,8 +203,7 @@ async function generateSlots(dateStr) {
         const calSnap = await getDoc(doc(db, "configuracion", "calendario"));
         if (calSnap.exists()) {
             const data = calSnap.data();
-            const fechaSeleccionada = new Date(dateStr + "T00:00:00");
-            const diaSemana = fechaSeleccionada.getDay(); // 0-6
+            const diaSemana = fechaComoDate(dateStr).getUTCDay(); // 0-6, domingo = 0
             const feriados = (data.deshabilitados || "").split(',').map(d => d.trim());
 
             // Verificamos si el día de la semana está habilitado (Control Total)
@@ -223,16 +231,16 @@ async function generateSlots(dateStr) {
         const selectedClassId = classSelect ? classSelect.value : 'reformer';
         const configSnap = await getDoc(doc(db, "configuracion", "clases"));
         const configAll = configSnap.exists() ? configSnap.data() : {};
-        const config = configAll[selectedClassId] || { inicio: "08:00", fin: "20:00", vacantes: 5 };
+        const config = { inicio: "08:00", fin: "20:00", vacantes: VACANTES_POR_DEFECTO, ...configAll[selectedClassId] };
 
-        // 3. CONSULTA DE OCUPACIÓN
-        const q = query(collection(db, "reservas"), 
+        // 3. CONSULTA DE OCUPACIÓN (contadores de /turnos)
+        const q = query(collection(db, "turnos"),
                         where("fecha", "==", dateStr),
                         where("disciplinaId", "==", selectedClassId));
         const snap = await getDocs(q);
         const ocupacion = {};
         snap.forEach(d => {
-            ocupacion[d.data().hora] = (ocupacion[d.data().hora] || 0) + 1;
+            ocupacion[d.data().hora] = d.data().ocupados || 0;
         });
 
         // 4. RENDERIZADO DE SLOTS
@@ -246,10 +254,18 @@ async function generateSlots(dateStr) {
             if (bloqueados.includes(label)) continue;
 
             const cupos = Number(config.vacantes) - (ocupacion[label] || 0);
+            const yaReservada = misReservas.has(
+                reservaIdDe(turnoIdDe(selectedClassId, dateStr, label), currentUser.uid));
             const btn = document.createElement('button');
             btn.className = 'btn-slot';
 
-            if (cupos <= 0) {
+            if (claseYaEmpezo(dateStr, label)) {
+                btn.classList.add('btn-full'); btn.disabled = true;
+                btn.innerHTML = `<span>${label}hs</span><small>FINALIZADA</small>`;
+            } else if (yaReservada) {
+                btn.classList.add('btn-full'); btn.disabled = true;
+                btn.innerHTML = `<span>${label}hs</span><small>RESERVADA</small>`;
+            } else if (cupos <= 0) {
                 btn.classList.add('btn-full'); btn.disabled = true;
                 btn.innerHTML = `<span>${label}hs</span><small>LLENO</small>`;
             } else {
@@ -265,5 +281,11 @@ async function generateSlots(dateStr) {
 }
 
 // Navegación Calendario
-document.getElementById('prev-month').onclick = () => { currentDate.setMonth(currentDate.getMonth() - 1); renderCalendar(); };
-document.getElementById('next-month').onclick = () => { currentDate.setMonth(currentDate.getMonth() + 1); renderCalendar(); };
+document.getElementById('prev-month').onclick = () => {
+    if (--calMonth < 0) { calMonth = 11; calYear--; }
+    renderCalendar();
+};
+document.getElementById('next-month').onclick = () => {
+    if (++calMonth > 11) { calMonth = 0; calYear++; }
+    renderCalendar();
+};
