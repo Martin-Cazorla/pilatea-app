@@ -71,7 +71,7 @@ await t('alumno cancela propia (batch +1)', () => assertSucceeds(cancel(ana(), '
 await t('alumno NO repite reembolso', () => assertFails(updateDoc(doc(ana(), 'alumnos/ana'), { creditos: increment(1), ultimaCancelacion: 'resAna' })));
 await env.withSecurityRulesDisabled(async (ctx) => updateDoc(doc(ctx.firestore(), 'alumnos/ana'), { creditos: 0 }));
 await t('alumno sin créditos NO reserva', () => assertFails(book(ana(), 'ana')));
-await t('alta: crea su doc como alumno con 0', () => assertSucceeds(setDoc(doc(env.authenticatedContext('nuevo').firestore(), 'alumnos/nuevo'), { nombre: 'N', email: 'n@x', creditos: 0, role: 'alumno', uid: 'nuevo', fechaAlta: new Date() })));
+await t('alta: NO crea su propio doc (solo admin)', () => assertFails(setDoc(doc(env.authenticatedContext('nuevo').firestore(), 'alumnos/nuevo'), { nombre: 'N', email: 'n@x', creditos: 0, role: 'alumno', uid: 'nuevo', fechaAlta: new Date() })));
 await t('alta: NO se crea como admin', () => assertFails(setDoc(doc(env.authenticatedContext('n2').firestore(), 'alumnos/n2'), { creditos: 0, role: 'admin' })));
 await t('alta: NO se crea con créditos', () => assertFails(setDoc(doc(env.authenticatedContext('n3').firestore(), 'alumnos/n3'), { creditos: 10, role: 'alumno' })));
 // Anónimo
@@ -81,6 +81,7 @@ await t('anónimo NO lee config', () => assertFails(getDoc(doc(anon(), 'configur
 await seed();
 await t('admin lista alumnos', () => assertSucceeds(getDocs(collection(admin(), 'alumnos'))));
 await t('admin carga créditos', () => assertSucceeds(updateDoc(doc(admin(), 'alumnos/beto'), { creditos: increment(5) })));
+await t('admin da de alta un alumno', () => assertSucceeds(setDoc(doc(admin(), 'alumnos/nuevo'), { nombre: 'N', email: 'n@x', creditos: 0, role: 'alumno', uid: 'nuevo', fechaAlta: new Date() })));
 await t('admin guarda config', () => assertSucceeds(setDoc(doc(admin(), 'configuracion/calendario'), { diasLaborales: [1, 2], deshabilitados: '' })));
 await t('admin cancela reserva ajena', () => assertSucceeds(deleteDoc(doc(admin(), 'reservas/resBeto'))));
 await t('admin devuelve crédito', () => assertSucceeds(updateDoc(doc(admin(), 'alumnos/beto'), { creditos: increment(1) })));

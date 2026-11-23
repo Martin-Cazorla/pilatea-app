@@ -4,7 +4,7 @@ import { getFirestore } from "https://www.gstatic.com/firebasejs/10.7.1/firebase
 import { getAuth } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
 // ESTA ES LA CONFIGURACIÓN CORRECTA DE TU PROYECTO V2
-const firebaseConfig = {
+export const firebaseConfig = {
   apiKey: "AIzaSyD-YJPMYUaTgwVFWGe1Zh1BHhxAxu3Bkwo",
   authDomain: "pilatea-app-v2.firebaseapp.com",
   projectId: "pilatea-app-v2",
