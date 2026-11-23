@@ -1,9 +1,10 @@
 import { db } from './config/firebase.js';
 import { 
     collection, onSnapshot, query, where, 
-    doc, getDoc, deleteDoc, updateDoc, increment 
+    doc, getDoc
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 import { requireAdmin } from './utils/guards.js';
+import { fechaArgentina, cancelarReservaComoAdmin } from './utils/turnos.js';
 
 // SEGURIDAD: nada de lo que sigue corre hasta confirmar que el usuario es admin.
 await requireAdmin();
@@ -16,7 +17,7 @@ const dashAlumnos = document.getElementById('dash-alumnos-totales');
 const dashCupos = document.getElementById('dash-cupos-hoy');
 const scheduleContainer = document.getElementById('daily-schedule-container');
 
-const hoy = new Date().toISOString().split('T')[0];
+const hoy = fechaArgentina();
 if(dateFilter) dateFilter.value = hoy;
 
 /**
@@ -153,11 +154,13 @@ if(scheduleContainer) {
         const btn = e.target.closest('.btn-cancel-mini');
         if(btn) {
             const { reserva, alumno } = btn.dataset;
-            if (confirm("¿Cancelar reserva?")) {
+            if (confirm("¿Cancelar reserva y devolver el crédito al alumno?")) {
                 try {
-                    await deleteDoc(doc(db, "reservas", reserva));
-                    await updateDoc(doc(db, "alumnos", alumno), { creditos: increment(1) });
-                } catch (e) { console.error(e); }
+                    const snap = await getDoc(doc(db, "reservas", reserva));
+                    if (!snap.exists()) return;
+                    // Borra la reserva, libera el cupo del turno y devuelve el crédito, todo junto.
+                    await cancelarReservaComoAdmin(db, { id: reserva, alumnoId: alumno, ...snap.data() });
+                } catch (e) { console.error(e); alert("No se pudo cancelar la reserva."); }
             }
         }
     });
